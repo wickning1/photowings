@@ -1,0 +1,11 @@
+FROM node:12-alpine
+RUN apk update && apk upgrade
+WORKDIR /usr/src/app
+COPY package.json ./
+RUN npm --quiet install
+COPY webpack.config.js ./
+COPY src src
+COPY static static
+
+ENTRYPOINT ["npm"]
+CMD ["run", "dev"]

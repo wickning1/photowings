@@ -1,0 +1,26 @@
+version: '3'
+services:
+  photowings:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: photowings
+    environment:
+      DB_HOST: mongodb
+      NODE_ENV: development
+      PORT: 80
+    ports:
+      - 80:80
+      - 10000:10000
+    depends_on:
+      - mongodb
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./static:/usr/src/app/static
+  mongodb:
+    image: mongo:latest
+    container_name: photowings_mongo
+    command: --logpath /dev/null
+    user: mongodb
+    volumes:
+      - ./db:/data/db

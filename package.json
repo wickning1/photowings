@@ -1,0 +1,45 @@
+{
+  "name": "photowings",
+  "version": "1.0.0",
+  "description": "Self-hosted API-first photo management with robust ownership model and tagging.",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "sapper dev",
+    "build": "sapper build",
+    "export": "sapper export",
+    "start": "node __sapper__/build"
+  },
+  "dependencies": {
+    "txstate-node-utils": "^2.8.8",
+    "moment-timezone": "^0.5.26",
+    "mongoose": "^5.6.7"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "sapper": "^0.27.4",
+    "svelte": "^3.6.9",
+    "svelte-loader": "^2.13.5",
+    "webpack": "^4.38.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wickning1/photowings.git"
+  },
+  "keywords": [
+    "photo",
+    "album",
+    "self-hosted",
+    "node",
+    "api",
+    "tagging",
+    "piwigo",
+    "chevereto",
+    "pigallery"
+  ],
+  "author": "Nick Wing",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wickning1/photowings/issues"
+  },
+  "homepage": "https://github.com/wickning1/photowings#readme"
+}
