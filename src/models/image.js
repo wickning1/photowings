@@ -2,9 +2,10 @@ const mongoose = require('mongoose')
 const _ = require('txstate-node-utils/lib/util')
 const monhelp = require('txstate-node-utils/lib/mongoose')
 const helpers = require('../lib/helpers')
+const path = require('path')
 
 const ImageSchema = new mongoose.Schema({
-  filename: {
+  filepath: {
     type: String,
     trim: true,
     required: true
@@ -23,7 +24,8 @@ const ImageSchema = new mongoose.Schema({
   },
   album: {
     type: mongoose.SchemaTypes.ObjectId,
-    ref: 'Album'
+    ref: 'Album',
+    required: true
   },
   people_featured: [{
     type: mongoose.SchemaTypes.ObjectId,
@@ -59,7 +61,7 @@ const ImageSchema = new mongoose.Schema({
 ImageSchema.methods.partial = function (requser) {
   return {
     id: this.id,
-    title: this.name || helpers.nameToTitle(this.filename),
+    name: this.name || helpers.nameToTitle(path.basename(this.filepath, path.extname(this.filepath))),
     taken: this.taken,
     album: this.album.partial(requser)
   }
@@ -91,7 +93,7 @@ ImageSchema.statics.populateFull = async function (target) {
 }
 
 ImageSchema.statics.getMany = async function (requser, query) {
-  return this.find()
+  return this.populateFull(await this.find().limit(50))
 }
 
 module.exports = mongoose.model('Image', ImageSchema)

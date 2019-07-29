@@ -4,6 +4,7 @@ import * as sapper from '@sapper/server'
 import mongoose from 'mongoose'
 import monhelp from 'txstate-node-utils/lib/mongoose'
 import appauthorization from './lib/appauthorization'
+import scanner from './lib/scanner'
 const app = apiservice.app
 
 // initialize models
@@ -28,4 +29,5 @@ app.use((error, req, res, next) => {
 })
 
 apiservice.start().then(async () => {
+  scanner()
 })

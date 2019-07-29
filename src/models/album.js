@@ -9,6 +9,11 @@ const AlbumSchema = new mongoose.Schema({
     trim: true,
     required: true
   },
+  filepath: {
+    type: String,
+    trim: true,
+    required: true
+  },
   notes: {
     type: String,
     trim: true
@@ -24,6 +29,10 @@ const AlbumSchema = new mongoose.Schema({
   owner: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: 'User'
+  },
+  parent: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'Album'
   },
   groups: [{
     group: {
@@ -60,6 +69,7 @@ AlbumSchema.methods.full = function (requser) {
   return {
     ...this.partial(requser),
     notes: this.notes,
+    parent: this.parent.id,
     owner: this.owner.partial(requser),
     groups: this.groups.map(g => ({
       group: g.group.partial(requser),
@@ -89,6 +99,5 @@ AlbumSchema.statics.populateFull = async function (target) {
     { path: 'users.role', populate: Role.populatePartial() }
   ])
 }
-
 
 module.exports = mongoose.model('Album', AlbumSchema)

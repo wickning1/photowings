@@ -22,7 +22,7 @@
 <div class="gallery">
 	{#each images as image}
     <figure>
-      <img src="image/inline/{image.id}" alt="{image.notes}">
+      <img src="api/image/inline/{image.id}" alt="{image.notes}">
       <figcaption>{image.name}</figcaption>
     </figure>
 	{/each}
