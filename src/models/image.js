@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const _ = require('txstate-node-utils/lib/util')
 const monhelp = require('txstate-node-utils/lib/mongoose')
 const helpers = require('../lib/helpers')
 const path = require('path')
@@ -55,6 +54,19 @@ const ImageSchema = new mongoose.Schema({
   uploaded: {
     type: Date,
     index: true
+  },
+  filesize: {
+    type: Number,
+    required: true
+  },
+  mime: {
+    type: String,
+    required: true
+  },
+  deleted: Boolean,
+  scanid: {
+    type: String,
+    index: true
   }
 })
 
@@ -83,7 +95,7 @@ ImageSchema.statics.populateFull = async function (target) {
   const Person = mongoose.model('Person')
   const Tag = mongoose.model('Tag')
   const User = mongoose.model('User')
-    return monhelp.populate(target, [
+  return monhelp.populate(target, [
     ...this.populatePartial(),
     { path: 'uploadedby', populate: User.populatePartial() },
     { path: 'people_featured', populate: Person.populatePartial() },
@@ -93,7 +105,7 @@ ImageSchema.statics.populateFull = async function (target) {
 }
 
 ImageSchema.statics.getMany = async function (requser, query) {
-  return this.populateFull(await this.find().limit(50))
+  return this.populateFull(await this.find({ deleted: { $ne: true } }).limit(50))
 }
 
 module.exports = mongoose.model('Image', ImageSchema)
