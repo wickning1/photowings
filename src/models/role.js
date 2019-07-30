@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
-const _ = require('txstate-node-utils/lib/util')
 const monhelp = require('txstate-node-utils/lib/mongoose')
-const helpers = require('../lib/helpers')
 
 const RoleSchema = new mongoose.Schema({
   name: {

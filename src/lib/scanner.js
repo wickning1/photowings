@@ -18,8 +18,10 @@ export default async function () {
   watcher.on('change', filepath => handleImage(filepath, scanid))
   watcher.on('unlink', filepath => handleDelete(filepath))
 
+  let scanned = 0
   await _.batch(files, async filepath => {
     await handleImage(filepath, scanid)
+    console.log(scanned++)
   }, 20)
   await Image.updateMany({ scanid: { $ne: scanid } }, { deleted: true })
 
@@ -62,6 +64,7 @@ async function handleImage (filepath, scanid) {
     const img = await jimp.read(filepath)
     image.width = img.bitmap.width
     image.height = img.bitmap.height
+    image.phash = img.pHash()
     const info = img._exif
     if (info && !_.isEmpty(info.tags)) {
       image.orientation = info.tags.Orientation || 1

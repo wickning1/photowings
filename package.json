@@ -12,10 +12,12 @@
   "dependencies": {
     "chokidar": "^3.0.2",
     "file-type": "^12.1.0",
+    "hex-to-binary": "^1.0.1",
     "moment-timezone": "^0.5.26",
     "mongoose": "^5.6.7",
     "jimp": "^0.6.4",
-    "txstate-node-utils": "^2.8.8"
+    "txstate-node-utils": "^2.8.8",
+    "wink-distance": "^2.0.0"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5",

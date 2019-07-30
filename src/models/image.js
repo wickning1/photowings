@@ -71,6 +71,7 @@ const ImageSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  phash: String,
   orientation: Number,
   location: PointSchema,
   filesize: {
