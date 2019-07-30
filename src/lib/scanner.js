@@ -58,7 +58,6 @@ async function handleImage (filepath, scanid) {
   ])
   try {
     await image.validate()
-    throw new Error('process all')
   } catch (e) {
     const img = await jimp.read(filepath)
     image.width = img.bitmap.width
