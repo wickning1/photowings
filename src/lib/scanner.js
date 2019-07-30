@@ -2,6 +2,8 @@ import chokidar from 'chokidar'
 import path from 'path'
 import fs from 'fs'
 import _ from 'txstate-node-utils/lib/util'
+import jimp from 'jimp'
+import moment from 'moment-timezone'
 import shelpers from './serverhelpers'
 import Image from '../models/image'
 import Album from '../models/album'
@@ -10,15 +12,18 @@ const fsp = fs.promises
 export default async function () {
   const files = await findfiles('/photos')
   const scanid = _.generatestring(10)
+
+  const watcher = chokidar.watch('/photos', { ignoreInitial: true, awaitWriteFinish: { stabilityThreshold: 500 } })
+  watcher.on('add', filepath => handleImage(filepath, scanid))
+  watcher.on('change', filepath => handleImage(filepath, scanid))
+  watcher.on('unlink', filepath => handleDelete(filepath))
+
   await _.batch(files, async filepath => {
     await handleImage(filepath, scanid)
   }, 20)
   await Image.updateMany({ scanid: { $ne: scanid } }, { deleted: true })
+
   console.log('initial scan complete')
-  const watcher = chokidar.watch('/photos', { ignoreInitial: true, awaitWriteFinish: { stabilityThreshold: 500 } })
-  watcher.on('add', filepath => handleImage(filepath))
-  watcher.on('change', filepath => handleImage(filepath))
-  watcher.on('unlink', filepath => handleDelete(filepath))
 }
 
 async function findfiles (directory) {
@@ -34,6 +39,14 @@ async function findfiles (directory) {
   return ret
 }
 
+function parseExifDate (exifDate) {
+  if (!exifDate) return undefined
+  const dt = moment(exifDate, ['YYYY:MM:DD HH:mm:ss', 'YYYY:MMDD:DD HH:mm:ss', 'YYYYMMDD', 'X'])
+  if (dt.isValid()) return dt.toDate()
+  console.log('unrecognizable date', exifDate)
+  return undefined
+}
+
 async function handleImage (filepath, scanid) {
   const mime = await shelpers.mime(filepath)
   if (!mime.startsWith('image')) return
@@ -43,9 +56,31 @@ async function handleImage (filepath, scanid) {
     Album.findOneAndUpdate({ filepath: albumpath }, { $set: { filepath: albumpath } }, { upsert: true, new: true }),
     fsp.stat(filepath)
   ])
+  try {
+    await image.validate()
+    throw new Error('process all')
+  } catch (e) {
+    const img = await jimp.read(filepath)
+    image.width = img.bitmap.width
+    image.height = img.bitmap.height
+    const info = img._exif
+    if (info && !_.isEmpty(info.tags)) {
+      image.orientation = info.tags.Orientation || 1
+      if (info.tags.GPSLatitude && info.tags.GPSLongitude) {
+        image.location = {
+          type: 'Point',
+          coordinates: [info.tags.GPSLongitude, info.tags.GPSLatitude]
+        }
+      }
+      image.taken = parseExifDate(info.tags.DateTimeOriginal) || parseExifDate(info.tags.ModifyDate)
+      if (!image.taken) {
+        image.taken = fstat.mtime
+        image.taken_is_guess = true
+      }
+    }
+  }
   image.scanid = scanid
   image.album = album
-  image.created = fstat.ctime
   image.modified = fstat.mtime
   image.filesize = fstat.size
   image.mime = mime

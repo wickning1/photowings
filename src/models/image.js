@@ -3,6 +3,18 @@ const monhelp = require('txstate-node-utils/lib/mongoose')
 const helpers = require('../lib/helpers')
 const path = require('path')
 
+const PointSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ['Point'],
+    required: true
+  },
+  coordinates: {
+    type: [Number],
+    required: true
+  }
+}, { _id: false })
+
 const ImageSchema = new mongoose.Schema({
   filepath: {
     type: String,
@@ -43,10 +55,6 @@ const ImageSchema = new mongoose.Schema({
     index: true
   },
   taken_is_guess: Boolean,
-  created: {
-    type: Date,
-    index: true
-  },
   modified: {
     type: Date,
     index: true
@@ -55,6 +63,16 @@ const ImageSchema = new mongoose.Schema({
     type: Date,
     index: true
   },
+  width: {
+    type: Number,
+    required: true
+  },
+  height: {
+    type: Number,
+    required: true
+  },
+  orientation: Number,
+  location: PointSchema,
   filesize: {
     type: Number,
     required: true
@@ -69,6 +87,7 @@ const ImageSchema = new mongoose.Schema({
     index: true
   }
 })
+ImageSchema.index({ location: '2dsphere' })
 
 ImageSchema.methods.partial = function (requser) {
   return {
@@ -82,7 +101,8 @@ ImageSchema.methods.partial = function (requser) {
 ImageSchema.methods.full = function (requser) {
   return {
     ...this.partial(requser),
-    tags: this.tags.map(t => t.partial(requser))
+    tags: this.tags.map(t => t.partial(requser)),
+    location: this.location
   }
 }
 
