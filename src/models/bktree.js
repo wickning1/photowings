@@ -6,15 +6,38 @@ const BKTreeSchema = new mongoose.Schema({
     required: true,
     index: true
   },
-  roothash: {
+  root: {
     type: String,
+    ref: 'BKNode',
     required: true
   }
 }, { _id: false })
 
 BKTreeSchema.methods.add = async function (hashtoadd) {
-  const root = await BKNode.findOne({ hash: this.roothash })
-  root.add(hashtoadd)
+  this.root.add(hashtoadd)
+}
+
+function getNextSet (searchhash, threshold, currentset, results) {
+  const ret = []
+  for (const node of currentset) {
+    ret.push(...node.search(searchhash, threshold, results))
+  }
+  return ret
+}
+
+BKTreeSchema.methods.search = async function (searchhash, threshold) {
+  let current = [this.root]
+  const results = []
+  while (current.length) {
+    const nexthashes = getNextSet(searchhash, threshold, current, results)
+    if (nexthashes.length) current = BKNode.find({ _id: { $in: nexthashes } })
+    else current = []
+  }
+  return results
+}
+
+BKTreeSchema.statics.get = async function (name) {
+  return this.findOne({ name }).populate('root')
 }
 
 module.exports = mongoose.model('BKTree', BKTreeSchema)
