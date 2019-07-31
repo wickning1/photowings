@@ -1,4 +1,3 @@
-const _ = require('txstate-node-utils/lib/util')
 const fileType = require('file-type')
 const fsp = require('fs').promises
 

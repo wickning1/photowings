@@ -50,6 +50,7 @@ const ImageSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.ObjectId,
     ref: 'Tag'
   }],
+  description: String,
   taken: {
     type: Date,
     index: true
@@ -71,7 +72,10 @@ const ImageSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  phash: String,
+  phash: {
+    type: String,
+    required: true
+  },
   orientation: Number,
   location: PointSchema,
   filesize: {

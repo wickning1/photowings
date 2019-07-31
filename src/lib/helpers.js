@@ -1,5 +1,8 @@
 const moment = require('moment-timezone')
 const _ = require('txstate-node-utils/lib/util')
+const anybase = require('any-base')
+
+const base64urlalphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
 
 module.exports = {
   nameToTitle: function (name) {
@@ -37,5 +40,7 @@ module.exports = {
       console.log(e)
       ctx.error(500, 'Unable to communicate with API.')
     }
-  }
+  },
+  hashToBinary: anybase(anybase.BIN, base64urlalphabet),
+  binaryToHash: anybase(base64urlalphabet, anybase.BIN)
 }
