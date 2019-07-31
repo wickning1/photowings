@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "any-base": "^1.1.0",
-    "@vingle/bmp-js": "^0.2.5",
     "chokidar": "^3.0.2",
     "exif-reader": "^1.0.2",
     "file-type": "^12.1.0",
     "hex-to-binary": "^1.0.1",
+    "jimp": "^0.6.4",
     "moment-timezone": "^0.5.26",
     "mongoose": "^5.6.7",
     "sharp": "^0.23.0",

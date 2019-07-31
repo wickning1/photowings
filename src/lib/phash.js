@@ -47,7 +47,7 @@ function applyDCT (f, size) {
 const LOW_SIZE = 8
 
 export async function phash (image) {
-  const data = image
+  const data = await image
     .greyscale()
     .resize(SAMPLE_SIZE, SAMPLE_SIZE, { fit: 'fill' })
     .rotate()
@@ -83,7 +83,6 @@ export async function phash (image) {
       fingerprint += dct[x + 1][y + 1] > avg ? '1' : '0'
     }
   }
-
   return fingerprint
 }
 

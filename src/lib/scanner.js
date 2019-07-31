@@ -4,7 +4,7 @@ import fs from 'fs'
 import _ from 'txstate-node-utils/lib/util'
 import sharp from 'sharp'
 import exif from 'exif-reader'
-import bmp from '@vingle/bmp-js'
+import jimp from 'jimp'
 import shelpers from './serverhelpers'
 import { phash } from './phash'
 import { binaryToHash } from './helpers'
@@ -61,49 +61,40 @@ async function handleImage (filepath, scanid) {
   ])
   try {
     await image.validate()
-    throw new Error('process all')
   } catch (e) {
     try {
       let img
       image.orientation = 1
       if (mime === 'image/bmp') {
-        const bmpbuffer = await fsp.readFile(filepath)
-        const data = bmp.decode(bmpbuffer, true)
-        image.width = data.width
-        image.height = data.height
-        img = await sharp(data.data, {
-          raw: {
-            width: data.width,
-            height: data.height,
-            channels: 4
-          }
-        })
+        const bmp = await jimp.read(filepath)
+        const png = await bmp.getBufferAsync('image/png')
+        img = await sharp(png)
       } else {
         img = await sharp(filepath)
-        const meta = await img.metadata()
-        image.width = meta.width
-        image.height = meta.height
-        const info = meta.exif ? exif(meta.exif) : {}
-        if (info) {
-          if (info.image) {
-            if (info.image.Orientation) image.orientation = info.image.Orientation
-            image.description = info.image.ImageDescription
-          }
-          if (info.exif) {
-            image.taken = info.exif.DateTimeOriginal || info.exif.ModifyDate
-          }
-          if (info.gps && info.gps.GPSLatitude && info.gps.GPSLongitude) {
-            image.location = {
-              type: 'Point',
-              coordinates: [
-                convertGPS(info.gps.GPSLongitudeRef, info.gps.GPSLongitude),
-                convertGPS(info.gps.GPSLatitudeRef, info.gps.GPSLatitude)
-              ]
-            }
+      }
+      const meta = await img.metadata()
+      image.width = meta.width
+      image.height = meta.height
+      const info = meta.exif ? exif(meta.exif) : {}
+      if (info) {
+        if (info.image) {
+          if (info.image.Orientation) image.orientation = info.image.Orientation
+          image.description = info.image.ImageDescription
+        }
+        if (info.exif) {
+          image.taken = info.exif.DateTimeOriginal || info.exif.ModifyDate
+        }
+        if (info.gps && info.gps.GPSLatitude && info.gps.GPSLongitude) {
+          image.location = {
+            type: 'Point',
+            coordinates: [
+              convertGPS(info.gps.GPSLongitudeRef, info.gps.GPSLongitude),
+              convertGPS(info.gps.GPSLatitudeRef, info.gps.GPSLatitude)
+            ]
           }
         }
-        image.phash = binaryToHash(phash(img))
       }
+      image.phash = binaryToHash(await phash(img))
       if (!image.taken) {
         image.taken = fstat.mtime
         image.taken_is_guess = true
