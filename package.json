@@ -4,7 +4,7 @@
   "description": "Self-hosted API-first photo management with robust ownership model and tagging.",
   "main": "src/index.js",
   "scripts": {
-    "dev": "sapper dev",
+    "dev": "sapper dev --no-hot",
     "build": "sapper build",
     "export": "sapper export",
     "start": "node __sapper__/build"
