@@ -19,7 +19,7 @@ app.use((error, req, res, next) => {
     res.status(422).json({ message: 'Validation failed.', validationerrors: monhelp.convertMongoErrors(error.errors) })
   } else if (error instanceof mongoose.Error.DocumentNotFoundError) {
     res.status(409).json({ message: 'There was a concurrency conflict with your request. Perhaps another user was trying to take action at the same time on the same object.' })
-    console.log('concurrency error', req.path)
+    console.info('concurrency error', req.path)
   } else if (error.status) {
     res.status(error.status).json({ message: error.message })
   } else {

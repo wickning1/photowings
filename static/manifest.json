@@ -1,0 +1,9 @@
+{
+	"background_color": "#ffffff",
+	"theme_color": "#999999",
+	"name": "PhotoWings",
+	"short_name": "PhotoWings",
+	"display": "minimal-ui",
+	"start_url": "/",
+	"icons": []
+}

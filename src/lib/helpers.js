@@ -12,6 +12,9 @@ module.exports = {
   timeAgo: function (dt) {
     return moment(dt).fromNow()
   },
+  photoTime: function (dt) {
+    return moment(dt).format('MMM D, YYYY @ ha')
+  },
   absolute: function (req) {
     if (!_.isBlank(process.env.PUBLISHED_BASEURL)) return process.env.PUBLISHED_BASEURL.trim().replace(/\/$/, '')
     return req.protocol + '://' + req.get('host')
@@ -20,7 +23,7 @@ module.exports = {
     if (_.isEmpty(params)) return url
     const paramstrings = []
     for (const key of Object.keys(params)) {
-      if (_.isArray(params[key])) {
+      if (Array.isArray(params[key])) {
         for (const val of params[key]) {
           paramstrings.push(`${encodeURIComponent(key)}[]=${encodeURIComponent(val)}`)
         }
@@ -37,7 +40,7 @@ module.exports = {
       if (res.status < 200 || res.status > 299) ctx.error(res.status, res.statusText)
       else return res.json()
     } catch (e) {
-      console.log(e)
+      console.error(e)
       ctx.error(500, 'Unable to communicate with API.')
     }
   },

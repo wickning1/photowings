@@ -30,7 +30,7 @@ export default async function () {
   }, 20)
   await Image.updateMany({ scanid: { $ne: scanid } }, { deleted: true })
 
-  console.log('initial scan complete')
+  console.info('initial scan complete')
 }
 
 async function findfiles (directory) {
@@ -100,7 +100,7 @@ async function handleImage (filepath, scanid) {
         image.taken_is_guess = true
       }
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
   image.scanid = scanid

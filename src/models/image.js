@@ -97,6 +97,8 @@ ImageSchema.index({ location: '2dsphere' })
 ImageSchema.methods.partial = function (requser) {
   return {
     id: this.id,
+    width: this.width,
+    height: this.height,
     name: this.name || helpers.nameToTitle(path.basename(this.filepath, path.extname(this.filepath))),
     taken: this.taken,
     album: this.album.partial(requser)
@@ -107,7 +109,10 @@ ImageSchema.methods.full = function (requser) {
   return {
     ...this.partial(requser),
     tags: this.tags.map(t => t.partial(requser)),
-    location: this.location
+    ...(this.location ? {
+      longitude: this.location.coordinates[0],
+      latitude: this.location.coordinates[1]
+    } : {})
   }
 }
 
@@ -130,7 +135,10 @@ ImageSchema.statics.populateFull = async function (target) {
 }
 
 ImageSchema.statics.getMany = async function (requser, query) {
-  return this.populateFull(await this.find({ deleted: { $ne: true } }).limit(50))
+  const limit = query.pp || 50
+  const offset = ((query.p || 1) - 1) * limit
+  const results = await this.find({ deleted: { $ne: true } }).skip(offset).limit(limit)
+  return this.populateFull(results)
 }
 
 module.exports = mongoose.model('Image', ImageSchema)
