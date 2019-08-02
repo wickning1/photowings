@@ -9,14 +9,17 @@
   let shown = false
 
   // make number of columns rely on the current width of the gallery
-  let w = 1000
-  let columns
+  let w = 1000 // this is bound to .gallery clientWidth, see HTML section below
   $: columns = Math.ceil(w / maxwidth)
 
   // all images will display with the column's width and auto height,
   // so to do our math we need to scale the heights accordingly
   function normalizeHeight (width, height) {
-    return height * (0.8333 * maxwidth / width)
+    // our sorting won't be perfect because the widths will fluctuate
+    // until a breakpoint is reached
+    // I'm using 7/8 of the maxwidth here as a guess, which gets us very
+    // close to perfect, especially in the 3-4 column range
+    return height * (0.875 * maxwidth / width)
   }
 
   // find the column with the smallest current height
@@ -26,8 +29,8 @@
 
   // function to efficiently sort images into columns
   function makeImageColumns (columns, images) {
-    const ret = Array.apply(null, Array(columns)).map(c => ([]))
-    const heights = Array.apply(null, Array(columns)).map(h => 0)
+    const ret = Array.apply(null, Array(columns)).map(c => ([])) // initializes ret to an array of arrays
+    const heights = Array.apply(null, Array(columns)).map(h => 0) // initializes heights to an array of zeroes
     for (const image of images) {
       const colidx = arrayMin(heights)
       ret[colidx].push(image)
