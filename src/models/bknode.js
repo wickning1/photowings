@@ -11,25 +11,25 @@ const BKNodeSchema = new mongoose.Schema({
   edges: [String]
 })
 
-function getDistance (hash1, hash2) {
-  return distance(hashToBinary(hash1), hashToBinary(hash2))
+function getDistance (value1, value2) {
+  return distance(hashToBinary(value1), hashToBinary(value2))
 }
 
-BKNodeSchema.methods.add = async function (hashtoadd) {
-  if (this._id === hashtoadd) return
-  const distance = getDistance(this._id, hashtoadd)
+BKNodeSchema.methods.add = async function (value) {
+  if (this._id === value) return
+  const distance = getDistance(this._id, value)
   if (this.edges[distance]) {
     const node = await this.constructor.findById(this.edges[distance])
-    await node.add(hashtoadd)
+    await node.add(value)
   } else {
-    this.edges[distance] = hashtoadd
+    this.edges[distance] = value
     await this.save()
   }
 }
 
-BKNodeSchema.methods.search = function (searchhash, threshold, results) {
-  const distance = getDistance(this._id, searchhash)
-  if (distance < threshold) results.push(this._id)
+BKNodeSchema.methods.search = function (searchvalue, threshold, results) {
+  const distance = getDistance(this._id, searchvalue)
+  if (distance < threshold) results.push({ value: this._id, distance: distance })
   const ret = []
   for (let i = Math.max(0, distance - threshold); i <= Math.min(64, distance + threshold); i++) {
     ret.push(this.edges[i])

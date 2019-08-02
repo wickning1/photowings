@@ -10,26 +10,29 @@ const BKTreeSchema = new mongoose.Schema({
     type: String,
     ref: 'BKNode',
     required: true
-  }
+  },
+  editing: Boolean
 }, { _id: false })
 
-BKTreeSchema.methods.add = async function (hashtoadd) {
-  this.root.add(hashtoadd)
+BKTreeSchema.methods.add = async function (value) {
+  // TODO: set this.editing atomically as a way to lock the tree - we can't allow concurrent adds
+  const existing = await BKNode.findById(value)
+  if (!existing) await this.root.add(value)
 }
 
-function getNextSet (searchhash, threshold, currentset, results) {
+function getNextSet (searchvalue, threshold, currentset, results) {
   const ret = []
   for (const node of currentset) {
-    ret.push(...node.search(searchhash, threshold, results))
+    ret.push(...node.search(searchvalue, threshold, results))
   }
   return ret
 }
 
-BKTreeSchema.methods.search = async function (searchhash, threshold) {
+BKTreeSchema.methods.search = async function (searchvalue, threshold) {
   let current = [this.root]
   const results = []
   while (current.length) {
-    const nexthashes = getNextSet(searchhash, threshold, current, results)
+    const nexthashes = getNextSet(searchvalue, threshold, current, results)
     if (nexthashes.length) current = BKNode.find({ _id: { $in: nexthashes } })
     else current = []
   }
