@@ -66,9 +66,10 @@ AlbumSchema.methods.partial = function (requser) {
 AlbumSchema.methods.full = function (requser) {
   return {
     ...this.partial(requser),
+    filepath: this.filepath,
     notes: this.notes,
-    parent: this.parent.id,
-    owner: this.owner.partial(requser),
+    ...(this.parent ? { parent: this.parent.partial(requser) } : {}),
+    ...(this.owner ? { owner: this.owner.partial(requser) } : {}),
     groups: this.groups.map(g => ({
       group: g.group.partial(requser),
       role: g.role.partial(requser)
@@ -94,8 +95,17 @@ AlbumSchema.statics.populateFull = async function (target) {
     { path: 'groups.group', populate: Group.populatePartial() },
     { path: 'groups.role', populate: Role.populatePartial() },
     { path: 'users.user', populate: User.populatePartial() },
-    { path: 'users.role', populate: Role.populatePartial() }
+    { path: 'users.role', populate: Role.populatePartial() },
+    { path: 'parent', populate: this.populatePartial() }
   ])
+}
+
+AlbumSchema.statics.getMany = async function (requser, query) {
+  const limit = query.pp || 500
+  const offset = ((query.p || 1) - 1) * limit
+  const sort = query.sort ? { [query.sort]: query.desc ? -1 : 1 } : { filepath: 1 }
+  const results = await this.find({ deleted: { $ne: true } }).skip(offset).limit(limit).sort(sort)
+  return this.populateFull(results)
 }
 
 module.exports = mongoose.model('Album', AlbumSchema)

@@ -40,9 +40,6 @@ self.addEventListener('fetch', event => {
   // don't try to handle e.g. data: URIs
   if (!url.protocol.startsWith('http')) return
 
-  // ignore dev server requests
-  if (url.hostname === self.location.hostname && url.port !== self.location.port) return
-
   // always serve static files and bundler-generated assets from cache
   if (url.host === self.location.host && cached.has(url.pathname)) {
     event.respondWith(caches.match(event.request))
