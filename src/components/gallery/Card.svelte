@@ -3,7 +3,7 @@
   import Loading from '../Loading'
   import { onMount } from 'svelte'
   export let image
-  export let topelement
+  export let topelement = null
   export let DetailsComponent = CardDetails
   let hover = false
   let mouseovertimer
@@ -24,7 +24,6 @@
   let src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
   let loading = false
   onMount(() => {
-    console.log('setting src')
     src = `api/image/inline/${image.id}`
     loading = true
   })
