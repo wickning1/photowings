@@ -1,12 +1,13 @@
 <script>
   import Card from './Card'
-  import { onMount, afterUpdate, tick } from 'svelte'
+  import { afterUpdate, tick } from 'svelte'
   export let images
   export let maxwidth = 400
   export let CardComponent = Card
+  export let widthguess = 1000
 
   // make number of columns rely on the current width of the gallery
-  let w = 1000 // this is bound to .gallery clientWidth, see HTML section below
+  let w = widthguess // this is bound to .gallery clientWidth, see HTML section below
   $: columns = Math.ceil(w / maxwidth)
   $: columnarray = new Array(columns)
 

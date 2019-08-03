@@ -5,6 +5,7 @@
   export let image
   export let topelement = null
   export let DetailsComponent = CardDetails
+
   let hover = false
   let mouseovertimer
   const mouseover = (e) => {
