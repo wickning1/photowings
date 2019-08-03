@@ -2,6 +2,7 @@
   import CardDetails from './CardDetails'
   import Loading from '../Loading'
   import { onMount } from 'svelte'
+  import { image as modalimage } from '../../stores/gallery'
   export let image
   export let topelement = null
   export let DetailsComponent = CardDetails
@@ -55,7 +56,7 @@
 </style>
 
 <figure on:mouseover={mouseover} on:mouseout={mouseout} style="padding-top: {100 * image.height / image.width}%;" bind:this={topelement}>
-  <img src="{src}" alt="{image.notes}" width="{image.width}" height="{image.height}" on:load={() => loading = false} />
+  <img src="{src}" alt="{image.notes}" width="{image.width}" height="{image.height}" on:load={() => loading = false} on:click={() => modalimage.update(img => image)} />
   {#if loading}
     <Loading />
   {/if}

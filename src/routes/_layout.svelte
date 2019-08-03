@@ -1,5 +1,6 @@
 <script>
-	import Nav from '../components/Nav.svelte';
+	import Nav from '../components/Nav.svelte'
+	import GalleryModal from '../components/gallery/Modal'
 </script>
 
 <style>
@@ -7,6 +8,8 @@
 
 <Nav/>
 
-<main>
-	<slot></slot>
-</main>
+<GalleryModal let:hidden={hidden}>
+	<main aria-hidden={hidden}>
+		<slot></slot>
+	</main>
+</GalleryModal>
