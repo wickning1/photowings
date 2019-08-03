@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
-const _ = require('txstate-node-utils/lib/util')
 const monhelp = require('txstate-node-utils/lib/mongoose')
-const helpers = require('../lib/helpers')
 
 const UserSchema = new mongoose.Schema({
   login: {
@@ -57,6 +55,5 @@ UserSchema.statics.populateFull = async function (target) {
     { path: 'person', populate: Person.populatePartial() }
   ])
 }
-
 
 module.exports = mongoose.model('User', UserSchema)

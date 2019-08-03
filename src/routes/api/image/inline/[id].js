@@ -3,8 +3,6 @@ import { RequestError } from 'txstate-node-utils/lib/error'
 import path from 'path'
 import fs from 'fs'
 import moment from 'moment-timezone'
-import shelpers from '../../../../lib/serverhelpers'
-const fsp = fs.promises
 
 export async function get (req, res) {
   const image = await Image.findById(req.params.id)

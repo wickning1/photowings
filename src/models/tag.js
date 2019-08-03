@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
-const _ = require('txstate-node-utils/lib/util')
 const monhelp = require('txstate-node-utils/lib/mongoose')
-const helpers = require('../lib/helpers')
 
 const TagSchema = new mongoose.Schema({
   name: {
@@ -33,6 +31,5 @@ TagSchema.statics.populateFull = async function (target) {
     ...this.populatePartial()
   ])
 }
-
 
 module.exports = mongoose.model('Tag', TagSchema)
