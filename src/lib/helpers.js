@@ -13,8 +13,9 @@ module.exports = {
     return moment(dt).fromNow()
   },
   photoTime: function (dt) {
-    return moment(dt).format('MMM D, YYYY @ ha')
+    return moment(dt).tz(this.defaultTZ).format('MMM D, YYYY @ ha')
   },
+  defaultTZ: Intl ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'America/Chicago',
   absolute: function (req) {
     if (!_.isBlank(process.env.PUBLISHED_BASEURL)) return process.env.PUBLISHED_BASEURL.trim().replace(/\/$/, '')
     return req.protocol + '://' + req.get('host')
@@ -45,5 +46,6 @@ module.exports = {
     }
   },
   hashToBinary: anybase(anybase.BIN, base64urlalphabet),
-  binaryToHash: anybase(base64urlalphabet, anybase.BIN)
+  binaryToHash: anybase(base64urlalphabet, anybase.BIN),
+  scanVersion: 6
 }

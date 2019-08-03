@@ -90,6 +90,11 @@ const ImageSchema = new mongoose.Schema({
   scanid: {
     type: String,
     index: true
+  },
+  scanversion: {
+    type: Number,
+    required: true,
+    min: helpers.scanVersion
   }
 })
 ImageSchema.index({ location: '2dsphere' })
@@ -137,7 +142,8 @@ ImageSchema.statics.populateFull = async function (target) {
 ImageSchema.statics.getMany = async function (requser, query) {
   const limit = query.pp || 50
   const offset = ((query.p || 1) - 1) * limit
-  const results = await this.find({ deleted: { $ne: true } }).skip(offset).limit(limit)
+  const sort = query.sort ? { [query.sort]: query.desc ? -1 : 1 } : { taken: 1 }
+  const results = await this.find({ deleted: { $ne: true } }).skip(offset).limit(limit).sort(sort)
   return this.populateFull(results)
 }
 

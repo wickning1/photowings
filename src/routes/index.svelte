@@ -1,6 +1,6 @@
 <script context="module">
-  import helpers from '../lib/helpers'
-	export async function preload({ params, query }) {
+	import helpers from '../lib/helpers'
+	export async function preload({ params, query }, session) {
 		const images = await helpers.fetch(this, 'api/image', query)
 		return { images }
 	}

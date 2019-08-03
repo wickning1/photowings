@@ -3,6 +3,7 @@ import express from 'express'
 import * as sapper from '@sapper/server'
 import mongoose from 'mongoose'
 import monhelp from 'txstate-node-utils/lib/mongoose'
+import UAParser from 'ua-parser-js'
 import appauthorization from './lib/appauthorization'
 import scanner from './lib/scanner'
 const app = apiservice.app
@@ -11,9 +12,14 @@ const app = apiservice.app
 for (const model of ['album', 'app', 'group', 'image', 'person', 'role', 'tag', 'user']) {
   require('./models/' + model)
 }
+app.get('/favicon.ico', async (req, res) => { res.status(204).send() })
 app.use(express.static('static'))
 app.use(appauthorization())
-app.use(sapper.middleware())
+app.use(sapper.middleware({
+  session: (req, res) => ({
+    useragent: new UAParser(req.headers['user-agent']).getResult()
+  })
+}))
 app.use((error, req, res, next) => {
   if (error instanceof mongoose.Error.ValidationError) {
     res.status(422).json({ message: 'Validation failed.', validationerrors: monhelp.convertMongoErrors(error.errors) })

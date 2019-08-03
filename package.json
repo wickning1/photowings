@@ -14,12 +14,14 @@
     "chokidar": "^3.0.2",
     "exif-reader": "^1.0.2",
     "file-type": "^12.1.0",
+    "geo-tz": "^5.0.5",
     "hex-to-binary": "^1.0.1",
     "jimp": "^0.6.4",
     "moment-timezone": "^0.5.26",
     "mongoose": "^5.6.7",
     "sharp": "^0.23.0",
-    "txstate-node-utils": "^2.8.8"
+    "txstate-node-utils": "^2.8.8",
+    "ua-parser-js": "^0.7.20"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5",
