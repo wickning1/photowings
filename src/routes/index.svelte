@@ -7,7 +7,7 @@
 </script>
 <script>
 	export let images = []
-	import Gallery from '../components/Gallery'
+	import Gallery from '../components/gallery/Gallery'
 	import SetHeader from '../components/SetHeader'
 </script>
 
