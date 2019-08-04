@@ -13,8 +13,6 @@
 		overflow: hidden;
 		text-align: center;
 	}
-	nav.secondary {
-	}
 
 	nav :global(ion-icon.left.nav-icon) {
 		left: 12px;

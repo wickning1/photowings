@@ -22,8 +22,6 @@
 		text-align: center;
 	}
 	span {
-		background-color: #495a76;
-		color: white;
 		font-weight: bold;
 	}
 	.pages :last-child {
@@ -37,9 +35,11 @@
 	{/if}
 	{#each pagearray as page}
 		{#if page === query.p - 1}
-			<span>{page + 1}</span>
-		{:else}
+			<span class="secondary">{page + 1}</span>
+		{:else if page === 0 || page === pagearray.length - 1 || Math.abs(page - query.p + 1) < 3}
 			<a href={helpers.qs('', { ...query, p: page + 1 })}>{page + 1}</a>
+		{:else if Math.abs(page - query.p + 1) === 3}
+			<span class="separator">•••</span>
 		{/if}
 	{/each}
 	{#if pagearray.length > query.p}
