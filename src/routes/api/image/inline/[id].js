@@ -18,7 +18,7 @@ export async function get (req, res) {
   res.setHeader('Cache-Control', 'private, must-revalidate, max-age=300')
   if (req.headers['if-modified-since'] && ifsince.isValid() && (modtime.isBefore(ifsince) || modtime.isSame(ifsince))) return res.status(304).send()
 
-  res.setHeader('Content-Disposition', 'inline;filename=' + filename)
+  res.setHeader('Content-Disposition', 'inline;filename="' + filename + '"')
   if (image.orientation !== 1) {
     const img = await sharp(filepath)
     const { data, info } = await img.rotate().toBuffer({ resolveWithObject: true })
