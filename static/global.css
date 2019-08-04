@@ -1,1 +1,67 @@
 /*! minireset.css v0.0.5 | MIT License | github.com/jgthms/minireset.css */html,body,p,ol,ul,li,dl,dt,dd,blockquote,figure,fieldset,legend,textarea,pre,iframe,hr,h1,h2,h3,h4,h5,h6{margin:0;padding:0}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}ul{list-style:none}button,input,select,textarea{margin:0}html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}img,video{height:auto;max-width:100%}iframe{border:0}table{border-collapse:collapse;border-spacing:0}td,th{padding:0;text-align:left}
+
+/*** Basic Theming ***/
+:root {
+  --modal-bg: rgba(1,1,1,0.9);
+  --main-bg: white;
+  --main-text: #333333;
+  --main-links: #264653;
+  --main-links-hover: var(--accent-bg);
+  --primary-bg: #30323D;
+  --primary-text: white;
+  --primary-links: white;
+  --secondary-bg: #230C23;
+  --secondary-links: white;
+  --secondary-text: white;
+  --accent-bg: #F2EFEA;
+  --accent-text: black;
+  --accent-links: #0F5257;
+  --success: #2afc98;
+  --fail: #9b1d20;
+}
+
+body {
+  background-color: var(--main-bg);
+  color: var(--main-text);
+}
+
+a {
+  color: var(--main-links);
+}
+a:hover {
+  color: var(--main-links-hover);
+}
+
+.primary {
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+}
+.primary a, .primary a:hover {
+  color: var(--primary-links);
+}
+
+.secondary {
+  background-color: var(--secondary-bg);
+  color: var(--secondary-text);
+}
+.secondary a, .secondary a:hover {
+  color: var(--secondary-links);
+}
+.secondary ion-icon {
+  color: var(--secondary-links);
+  border-color: var(--secondary-links);
+}
+
+.accent {
+  background-color: var(--accent-bg);
+  color: var(--accent-text);
+}
+.accent a, .accent a:hover {
+  color: var(--accent-links);
+}
+
+/*** Adjustments to PureCSS ***/
+.pure-form select {
+  font-size: 1.2em;
+  max-width: 100%;
+}

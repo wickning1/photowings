@@ -9,36 +9,32 @@
 	}
 </script>
 <script>
-	export let images = []
+	export let images = {}
 	export let albums = []
 	export let query = {}
+	import FilterPanel from '../components/FilterPanel'
 	import Gallery from '../components/gallery/Gallery'
 	import SetHeader from '../components/SetHeader'
-	let form
+	import Pagination from '../components/Pagination'
+	import PageHeader from '../components/PageHeader'
 </script>
-
-<style>
-
-</style>
 
 <svelte:head>
 	<title>Gallery • PhotoWings</title>
 </svelte:head>
 
-<h1>All My Photos</h1>
+<PageHeader>
+	All My Photos
+	<div slot="extra">
+		<FilterPanel query={query} preserve={['pp', 'sort']} reset={{ p: 1 }} filters={{
+			album: {
+				values: albums.map(a => ({ val: a.id, label: a.filepath }))
+			}
+		}}/>
+	</div>
+</PageHeader>
 
-<form action="" method="GET" bind:this={form}>
-	{#if query.sort}<input type="hidden" name="sort" value={query.sort} />{/if}
-	{#if query.p}<input type="hidden" name="p" value={query.p} />{/if}
-	{#if query.pp}<input type="hidden" name="pp" value={query.pp} />{/if}
-	<label for="folderdropdown" class="sr-only">Select Album:</label>
-	<select id="folderdropdown" name="album" on:change={() => form.submit()}>
-		<option value="">Select Album</option>
-		{#each albums as album}
-				<option value={album.id} selected={album.id === query.album}>{album.filepath}</option>
-		{/each}
-	</select>
-</form>
 <SetHeader level=2>
-	<Gallery images={images} />
+	<Gallery images={images.data} />
 </SetHeader>
+<Pagination query={query} lastpage={images.info.finalpage} />

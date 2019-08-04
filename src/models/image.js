@@ -146,7 +146,11 @@ ImageSchema.statics.getMany = async function (requser, query) {
   const where = [{ deleted: { $ne: true } }]
   if (query.album) where.push({ album: query.album })
   const results = await this.find({ $and: where }).skip(offset).limit(limit).sort(sort)
-  return this.populateFull(results)
+  const [count, data] = await Promise.all([
+    this.countDocuments({ $and: where }),
+    this.populateFull(results)
+  ])
+  return helpers.apiResponse(count, data, limit)
 }
 
 module.exports = mongoose.model('Image', ImageSchema)

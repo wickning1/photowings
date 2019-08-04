@@ -69,6 +69,7 @@ async function handleImage (filepath, scanid) {
   ])
   try {
     await image.validate()
+    if (!image.modified || moment(fstat.mtime).isAfter(moment(image.modified))) throw new Error('need to process')
   } catch (e) {
     try {
       let img
@@ -110,13 +111,13 @@ async function handleImage (filepath, scanid) {
         image.taken_is_guess = true
       }
       image.scanversion = helpers.scanVersion
+      image.modified = fstat.mtime
     } catch (err) {
       console.error(err)
     }
   }
   image.scanid = scanid
   image.album = album
-  image.modified = fstat.mtime
   image.filesize = fstat.size
   image.mime = mime
   image.deleted = false

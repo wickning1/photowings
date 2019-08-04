@@ -9,7 +9,7 @@
   // make number of columns rely on the current width of the gallery
   let w = widthguess // this is bound to .gallery clientWidth, see HTML section below
   $: columns = Math.ceil(w / maxwidth)
-  $: columnarray = new Array(columns)
+  $: columnarray = [...Array(columns).keys()]
 
   // this next section is designed to minimize the amount of work that needs to be done
   // svelte is responsible for creating all gallery components and placing them into
@@ -21,6 +21,7 @@
   let cardelements = {}
   let columnelements = []
   let unsortedcolumn
+  $: savecolumns = 0 * images.length // little trick to trigger a sort when images array changes
   afterUpdate(async () => {
     await tick()
     if (savecolumns !== columns) { // only do work if number of columns has changed, afterUpdate triggers on resize
@@ -61,15 +62,15 @@
     height: 1px;
   }
   .gallery-column {
-    padding-right: 10px;
+    padding-left: 10px;
   }
-  .gallery-column:last-child {
-    padding-right: 0;
+  .gallery-column:first-child {
+    padding-left: 0;
   }
 </style>
 
 <div class="gallery" bind:clientWidth={w}>
-  {#each columnarray as col, idx}
+  {#each columnarray as idx}
     <div class="gallery-column" style="width: {100 / columns}%;" bind:this={columnelements[idx]}></div>
   {/each}
   <div class="gallery-unsorted" style="width: {100 / columns}%;" bind:this={unsortedcolumn}>
