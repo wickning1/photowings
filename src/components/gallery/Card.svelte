@@ -1,6 +1,7 @@
 <script>
   import CardDetails from './CardDetails'
   import HoverControls from '../HoverControls'
+  import HasJS from '../noscript/HasJS'
   import Loading from '../Loading'
   import { onMount } from 'svelte'
   import { which, data } from '../../stores/modal'
@@ -30,9 +31,10 @@
   }
 
   let src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+  let realsrc = `api/image/inline/${image.id}`
   let loading = false
   onMount(() => {
-    src = `api/image/inline/${image.id}`
+    src = realsrc
     loading = true
   })
 </script>
@@ -67,9 +69,12 @@
 
 <figure use:safemousein on:in={mouseover} on:out={mouseout}
   use:a11yclick on:click={activate} style="padding-top: {100 * image.height / image.width}%;" bind:this={topelement}>
-  <img src="{src}"
-    alt="{image.notes || ''}" width="{image.width}" height="{image.height}" tabindex="0"
-    on:load={() => loading = false} />
+  <HasJS>
+    <img src={src}
+      alt={image.alt || 'photo, no description available'} width={image.width} height={image.height} tabindex=0
+      on:load={() => loading = false} />
+    <img slot="noscript" src={realsrc} alt={image.alt || 'photo, no description available'} width={image.width} height={image.height} tabindex=0 />
+  </HasJS>
   {#if loading}
     <Loading />
   {/if}

@@ -1,10 +1,12 @@
 <script>
   import Card from './Card'
+  import HasJS from '../noscript/HasJS'
+  import NoJS from '../noscript/NoJS'
   import { afterUpdate, tick } from 'svelte'
   export let images
   export let maxwidth = 400
   export let CardComponent = Card
-  export let widthguess = 1000
+  export let widthguess = 799
 
   // make number of columns rely on the current width of the gallery
   let w = widthguess // this is bound to .gallery clientWidth, see HTML section below
@@ -71,11 +73,21 @@
 
 <div class="gallery" bind:clientWidth={w}>
   {#each columnarray as idx}
-    <div class="gallery-column" style="width: {100 / columns}%;" bind:this={columnelements[idx]}></div>
+    <div class="gallery-column" style="width: {100 / columns}%;" bind:this={columnelements[idx]}>
+      <NoJS>
+        {#each images as image, imageidx}
+          {#if imageidx % columns === idx}
+            <CardComponent image={image} />
+          {/if}
+        {/each}
+      </NoJS>
+    </div>
   {/each}
-  <div class="gallery-unsorted" style="width: {100 / columns}%;" bind:this={unsortedcolumn}>
-    {#each images as image (image.id)}
-      <CardComponent image={image} bind:topelement={cardelements[image.id]} />
-    {/each}
-  </div>
+  <HasJS>
+    <div class="gallery-unsorted" style="width: {100 / columns}%;" bind:this={unsortedcolumn}>
+      {#each images as image (image.id)}
+        <CardComponent image={image} bind:topelement={cardelements[image.id]} />
+      {/each}
+    </div>
+  </HasJS>
 </div>
