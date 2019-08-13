@@ -137,6 +137,7 @@ ImageSchema.methods.partial = function (requser) {
     width: swapdims ? this.height : this.width,
     height: swapdims ? this.width : this.height,
     name: this.name || nameToTitle(path.basename(this.filepath, path.extname(this.filepath))),
+    description: this.description,
     taken: this.takenLocal(),
     album: this.album.partial(requser)
   }
@@ -148,6 +149,12 @@ ImageSchema.methods.full = function (requser) {
     description: this.description || '',
     orientation: this.orientation,
     uploadedby: this.uploadedby,
+    alt: [
+      this.description,
+      ...this.tags.map(t => t.name),
+      ...this.people_featured.map(p => p.name),
+      ...this.people_related.map(p => p.name)
+    ].join(', '),
     tags: this.tags.map(t => t.partial(requser)),
     people_featured: this.people_featured || [],
     people_related: this.people_related || [],
