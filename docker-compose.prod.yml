@@ -3,11 +3,11 @@ services:
   photowings:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: photowings
     environment:
       DB_HOST: mongodb
-      NODE_ENV: development
+      NODE_ENV: production
       PORT: 80
       TZ: America/Chicago
     ports:

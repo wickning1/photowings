@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const { distance } = require('../lib/phash')
-const { hashToBinary } = require('../lib/helpers')
+const { hashToBinary } = require('../lib/serverhelpers')
 
 const BKNodeSchema = new mongoose.Schema({
   _id: {

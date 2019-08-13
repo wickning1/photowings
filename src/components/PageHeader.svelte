@@ -15,7 +15,7 @@
   .page-header :global(form) {
     top: 50px;
   }
-  .page-header :global(ion-icon) {
+  .page-header :global(.icon-button) {
     right: 16px;
   }
 </style>

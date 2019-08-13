@@ -1,15 +1,15 @@
 <script>
 	import Nav from '../components/Nav.svelte'
-	import GalleryModal from '../components/gallery/Modal'
+	import LayoutModals from '../components/LayoutModals'
 </script>
 
 <style>
 </style>
 
-<Nav/>
 
-<GalleryModal let:hidden={hidden}>
-	<main aria-hidden={hidden}>
+<LayoutModals let:modalactive={modalactive}>
+	<Nav ariahidden={modalactive} />
+	<main aria-hidden={modalactive}>
 		<slot></slot>
 	</main>
-</GalleryModal>
+</LayoutModals>

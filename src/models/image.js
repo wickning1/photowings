@@ -1,31 +1,94 @@
 const mongoose = require('mongoose')
+const _ = require('txstate-node-utils/lib/util')
 const monhelp = require('txstate-node-utils/lib/mongoose')
-const helpers = require('../lib/helpers')
+const shelpers = require('../lib/serverhelpers')
+const { nameToTitle, defaultTZ } = require('../lib/helpers')
 const path = require('path')
+const geoTz = require('geo-tz')
+const moment = require('moment-timezone')
 
 const PointSchema = new mongoose.Schema({
   type: {
     type: String,
     enum: ['Point'],
-    required: true
+    required: true,
+    default: 'Point'
   },
   coordinates: {
     type: [Number],
-    required: true
-  }
+    required: true,
+    default: [0, 0]
+  },
+  timeZone: String
 }, { _id: false })
 
-const ImageSchema = new mongoose.Schema({
+// all the values that can be obtained from the image
+// but the user is allowed to override them during edits
+class OverrideSchema extends mongoose.Schema {
+  constructor () {
+    super(...arguments)
+    this.add({
+      description: {
+        type: String,
+        trim: true
+      },
+      taken: Date,
+      orientation: {
+        type: Number,
+        min: 1,
+        max: 8
+      },
+      location: PointSchema,
+      deleted: {
+        type: Boolean,
+        index: true
+      }
+    })
+  }
+}
+
+const SubOverrideSchema = new OverrideSchema({}, { _id: false })
+
+const ImageSchema = new OverrideSchema({
   filepath: {
     type: String,
     trim: true,
     required: true
   },
-  name: {
+  mime: {
     type: String,
-    trim: true
+    required: true
   },
-  notes: {
+  filesize: {
+    type: Number,
+    required: true
+  },
+  modified: {
+    type: Date,
+    index: true
+  },
+  width: {
+    type: Number,
+    required: true
+  },
+  height: {
+    type: Number,
+    required: true
+  },
+  phash: {
+    type: String,
+    required: true
+  },
+  taken_is_guess: Boolean,
+  file: {
+    type: SubOverrideSchema,
+    default: {}
+  },
+  overrides: {
+    type: SubOverrideSchema,
+    default: {}
+  },
+  name: {
     type: String,
     trim: true
   },
@@ -50,43 +113,10 @@ const ImageSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.ObjectId,
     ref: 'Tag'
   }],
-  description: String,
-  taken: {
-    type: Date,
+  deleted: {
+    type: Boolean,
     index: true
   },
-  taken_is_guess: Boolean,
-  modified: {
-    type: Date,
-    index: true
-  },
-  uploaded: {
-    type: Date,
-    index: true
-  },
-  width: {
-    type: Number,
-    required: true
-  },
-  height: {
-    type: Number,
-    required: true
-  },
-  phash: {
-    type: String,
-    required: true
-  },
-  orientation: Number,
-  location: PointSchema,
-  filesize: {
-    type: Number,
-    required: true
-  },
-  mime: {
-    type: String,
-    required: true
-  },
-  deleted: Boolean,
   scanid: {
     type: String,
     index: true
@@ -94,18 +124,20 @@ const ImageSchema = new mongoose.Schema({
   scanversion: {
     type: Number,
     required: true,
-    min: helpers.scanVersion
+    min: shelpers.scanVersion
   }
 })
 ImageSchema.index({ location: '2dsphere' })
+ImageSchema.index({ taken: 1 })
 
 ImageSchema.methods.partial = function (requser) {
+  const swapdims = this.orientation > 4
   return {
     id: this.id,
-    width: this.width,
-    height: this.height,
-    name: this.name || helpers.nameToTitle(path.basename(this.filepath, path.extname(this.filepath))),
-    taken: this.taken,
+    width: swapdims ? this.height : this.width,
+    height: swapdims ? this.width : this.height,
+    name: this.name || nameToTitle(path.basename(this.filepath, path.extname(this.filepath))),
+    taken: this.takenLocal(),
     album: this.album.partial(requser)
   }
 }
@@ -113,8 +145,13 @@ ImageSchema.methods.partial = function (requser) {
 ImageSchema.methods.full = function (requser) {
   return {
     ...this.partial(requser),
+    description: this.description || '',
+    orientation: this.orientation,
+    uploadedby: this.uploadedby,
     tags: this.tags.map(t => t.partial(requser)),
-    ...(this.location ? {
+    people_featured: this.people_featured || [],
+    people_related: this.people_related || [],
+    ...(!_.isEmpty(this.location) ? {
       longitude: this.location.coordinates[0],
       latitude: this.location.coordinates[1]
     } : {})
@@ -150,7 +187,30 @@ ImageSchema.statics.getMany = async function (requser, query) {
     this.countDocuments({ $and: where }),
     this.populateFull(results)
   ])
-  return helpers.apiResponse(count, data, limit)
+  return shelpers.apiResponse(count, data, limit)
 }
+
+ImageSchema.statics.fromJson = function (requser, json) {
+  // read json and add data to image
+}
+
+ImageSchema.methods.setLocation = function (latitude, longitude, override = true) {
+  const loc = {
+    type: 'Point',
+    coordinates: [longitude, latitude],
+    timeZone: geoTz(latitude, longitude)[0] || defaultTZ
+  }
+  if (override) this.overrides.location = loc
+  else this.file.location = loc
+}
+ImageSchema.methods.takenLocal = function () {
+  return moment(this.taken).tz(this.location ? this.location.timeZone : defaultTZ).format('YYYY-MM-DDTHH:mm:ssZZ')
+}
+
+ImageSchema.pre('validate', function () {
+  for (const key of Object.keys(SubOverrideSchema.paths).filter(p => !p.includes('.'))) {
+    this[key] = this.overrides[key] || this.file[key]
+  }
+})
 
 module.exports = mongoose.model('Image', ImageSchema)

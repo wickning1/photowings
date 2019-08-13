@@ -16,15 +16,41 @@ module.exports = {
     module: {
       rules: [
         {
-          test: /\.(svelte|html)$/,
+          test: /\.(js|svelte)$/,
+          exclude: /node_modules/,
           use: {
-            loader: 'svelte-loader',
+            loader: 'babel-loader',
             options: {
-              dev,
-              hydratable: true,
-              hotReload: false // pending https://github.com/sveltejs/svelte/issues/2377
+              presets: [
+                ['@babel/preset-env', {
+                  useBuiltIns: 'usage',
+                  corejs: { version: 3 },
+                  targets: {
+                    node: 'current',
+                    edge: 40
+                  }
+                }]
+              ],
+              plugins: [
+                '@babel/plugin-syntax-dynamic-import',
+                '@babel/plugin-transform-spread',
+                '@babel/plugin-proposal-object-rest-spread'
+              ]
             }
           }
+        },
+        {
+          test: /\.svelte$/,
+          use: [
+            {
+              loader: 'svelte-loader',
+              options: {
+                dev,
+                hydratable: true,
+                hotReload: false // pending https://github.com/sveltejs/svelte/issues/2377
+              }
+            }
+          ]
         }
       ]
     },

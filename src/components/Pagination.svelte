@@ -1,8 +1,8 @@
 <script>
   export let lastpage = 1
   export let query = {}
-  import helpers from '../lib/helpers'
-	let pagearray = [...Array(lastpage).keys()]
+  import { qs } from '../lib/helpers'
+	$: pagearray = [...Array(lastpage).keys()]
 </script>
 
 <style>
@@ -31,18 +31,18 @@
 
 <div class="pages">
 	{#if query.p > 1}
-		<a href={helpers.qs('', { ...query, p: query.p - 1})}>&lt;</a>
+		<a href={qs('', { ...query, p: query.p - 1})}>&lt;</a>
 	{/if}
 	{#each pagearray as page}
 		{#if page === query.p - 1}
 			<span class="secondary">{page + 1}</span>
 		{:else if page === 0 || page === pagearray.length - 1 || Math.abs(page - query.p + 1) < 3}
-			<a href={helpers.qs('', { ...query, p: page + 1 })}>{page + 1}</a>
+			<a href={qs('', { ...query, p: page + 1 })}>{page + 1}</a>
 		{:else if Math.abs(page - query.p + 1) === 3}
 			<span class="separator">•••</span>
 		{/if}
 	{/each}
 	{#if pagearray.length > query.p}
-		<a href={helpers.qs('', { ...query, p: query.p + 1})}>&gt;</a>
+		<a href={qs('', { ...query, p: query.p + 1})}>&gt;</a>
 	{/if}
 </div>

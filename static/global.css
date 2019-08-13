@@ -1,13 +1,41 @@
 /*! minireset.css v0.0.5 | MIT License | github.com/jgthms/minireset.css */html,body,p,ol,ul,li,dl,dt,dd,blockquote,figure,fieldset,legend,textarea,pre,iframe,hr,h1,h2,h3,h4,h5,h6{margin:0;padding:0}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}ul{list-style:none}button,input,select,textarea{margin:0}html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}img,video{height:auto;max-width:100%}iframe{border:0}table{border-collapse:collapse;border-spacing:0}td,th{padding:0;text-align:left}
 
+/*** SR-Only for accessibility ***/
+.sr-only {
+	border: 0 !important;
+	clip: rect(1px, 1px, 1px, 1px) !important;
+	-webkit-clip-path: inset(50%) !important;
+		clip-path: inset(50%) !important;
+	height: 1px !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	padding: 0 !important;
+	position: absolute !important;
+	width: 1px !important;
+	white-space: nowrap !important;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+	clip: auto !important;
+	-webkit-clip-path: none !important;
+		clip-path: none !important;
+	height: auto !important;
+	margin: auto !important;
+	overflow: visible !important;
+	width: auto !important;
+	white-space: normal !important;
+}
+
 /*** Basic Theming ***/
 :root {
   --modal-bg: rgba(1,1,1,0.9);
+  --contrast-bg: rgba(1,1,1,0.5);
   --main-bg: white;
   --main-text: #333333;
   --main-links: #264653;
   --main-links-hover: var(--accent-bg);
   --primary-bg: #30323D;
+  --primary-bg-alpha: rgba(48, 50, 61, 0.6);
   --primary-text: white;
   --primary-links: white;
   --secondary-bg: #230C23;
@@ -39,6 +67,10 @@ a:hover {
 .primary a, .primary a:hover {
   color: var(--primary-links);
 }
+.primary button {
+  color: var(--primary-links);
+  border-color: var(--primary-links);
+}
 
 .secondary {
   background-color: var(--secondary-bg);
@@ -47,7 +79,7 @@ a:hover {
 .secondary a, .secondary a:hover {
   color: var(--secondary-links);
 }
-.secondary ion-icon {
+.secondary button {
   color: var(--secondary-links);
   border-color: var(--secondary-links);
 }
@@ -59,9 +91,17 @@ a:hover {
 .accent a, .accent a:hover {
   color: var(--accent-links);
 }
+.accent button {
+  color: var(--accent-links);
+  border-color: var(--accent-links);
+}
 
 /*** Adjustments to PureCSS ***/
 .pure-form select {
   font-size: 1.2em;
   max-width: 100%;
+}
+
+.pure-form input[type="submit"] {
+  padding: 5px 8px;
 }

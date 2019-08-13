@@ -1,16 +1,10 @@
 <script>
-  export let shown = false
+  import FocusLock from './FocusLock'
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
 
   const endmodal = () => {
     dispatch('dismiss')
-  }
-
-  const handlekeydown = e => {
-    if (e.keyCode === 27) { // escape
-      endmodal()
-    }
   }
 </script>
 
@@ -21,15 +15,13 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.95);
+    background-color: var(--modal-bg);
     overflow: auto;
   }
 </style>
 
-<svelte:window on:keydown={handlekeydown} />
-<slot hidden={shown} />
-{#if shown}
-  <div on:click={endmodal}>
-    <slot name="content"></slot>
-  </div>
-{/if}
+<div on:click={function (e) { if (e.target === this) endmodal() }}>
+  <FocusLock on:escape={endmodal}>
+    <slot></slot>
+  </FocusLock>
+</div>

@@ -1,5 +1,8 @@
 {
   "files.watcherExclude": {
-    "/db/**": true
+    "**/db/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true
   }
 }

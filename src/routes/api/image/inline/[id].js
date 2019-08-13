@@ -4,6 +4,7 @@ import path from 'path'
 import fs from 'fs'
 import moment from 'moment-timezone'
 import sharp from 'sharp'
+import exifmath from 'exif-orientation-math'
 
 export async function get (req, res) {
   const image = await Image.findById(req.params.id)
@@ -21,7 +22,8 @@ export async function get (req, res) {
   res.setHeader('Content-Disposition', 'inline;filename="' + filename + '"')
   if (image.orientation !== 1) {
     const img = await sharp(filepath)
-    const { data, info } = await img.rotate().toBuffer({ resolveWithObject: true })
+    const ops = exifmath.operations(image.orientation, { flop: true })
+    const { data, info } = await img.flip(ops.flip).flop(ops.flop).rotate(ops.angle).toBuffer({ resolveWithObject: true })
     res.setHeader('Content-Type', 'image/' + info.format)
     res.setHeader('Content-Length', info.size)
     res.send(data)
