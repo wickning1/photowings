@@ -7,7 +7,7 @@ export function a11yclick (node) {
   }
 
   function click (e) {
-    node.dispatchEvent(new CustomEvent('click'))
+    if (!(e instanceof CustomEvent)) node.dispatchEvent(new CustomEvent('click'))
   }
 
   node.addEventListener('click', click)
