@@ -5,8 +5,7 @@
   import Loading from '../Loading'
   import { onMount } from 'svelte'
   import { which, data } from '../../stores/modal'
-  import safemousein from '../../actions/safemousein'
-  import { a11yclick } from '../../actions/a11yevents'
+  import hoverclick from '../../actions/hoverclick'
   export let image
   export let showactions = false
   export let topelement = null
@@ -14,20 +13,15 @@
   export let ActionsComponent = undefined
 
   let hover = false
-  let locked = false
   const mouseover = (e) => {
     hover = true
-    locked = true
-    setTimeout(() => { locked = false }, 350)
   }
   const mouseout = (e) => {
     hover = false
   }
   const activate = e => {
-    if (!locked && hover) {
-      which.update(w => 'imageviewer')
-      data.update(d => image)
-    }
+    which.update(w => 'imageviewer')
+    data.update(d => image)
   }
 
   let src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
@@ -67,8 +61,8 @@
   }
 </style>
 
-<figure use:safemousein on:in={mouseover} on:out={mouseout}
-  use:a11yclick on:click={activate} style="padding-top: {100 * image.height / image.width}%;" bind:this={topelement}>
+<figure use:hoverclick on:in={mouseover} on:out={mouseout} on:activate={activate}
+  style="padding-top: {100 * image.height / image.width}%;" bind:this={topelement}>
   <HasJS>
     <img src={src}
       alt={image.alt || 'photo, no description available'} width={image.width} height={image.height} tabindex=0
@@ -79,11 +73,11 @@
     <Loading />
   {/if}
   {#if ActionsComponent}
-    <HoverControls control="manual" showcontrols={hover || showactions}>
+    <HoverControls idlehidden={false} showcontrols={hover || showactions}>
       <ActionsComponent image={image} hover={hover} />
     </HoverControls>
   {/if}
-  <figcaption class="primary" on:click|stopPropagation>
+  <figcaption class="primary">
     <DetailsComponent image={image} hover={hover} />
   </figcaption>
 </figure>

@@ -29,7 +29,7 @@
 
 <svelte:window bind:innerWidth={w} bind:innerHeight={h} />
 <div class="viewer-container" role="dialog" aria-label="detailed image viewer" style="width: {wide ? '100%' : 'auto'}; height: {wide ? 'auto' : '100%'};">
-  <HoverControls timeout={2500}>
+  <HoverControls>
     <IconButton name="create" relative white label="edit photo metadata" on:click={dismiss} />
     <IconButton name="close-circle-outline" relative white label="close photo modal" on:click={dismiss} />
   </HoverControls>

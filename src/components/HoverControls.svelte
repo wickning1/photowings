@@ -1,30 +1,32 @@
 <script>
   import safemousein from '../actions/safemousein.js'
+  import { onMount } from 'svelte'
   export let middle = false
   export let bottom = false
   export let left = false
   export let center = false
   export let top = !middle && !bottom
   export let right = !left && !center
-  export let timeout = 0
   export let showcontrols = false
-  export let control = 'auto'
+  export let idlehidden = true
+  export let idletimer = 2500
   let controltimer
   let mouseisover = false
 
   const show = () => {
+    if (!idlehidden) return
     clearTimeout(controltimer)
     showcontrols = true
-    if (control === 'auto' && timeout > 0) controltimer = setTimeout(() => { if (!mouseisover) hidecontrols() }, timeout)
+    controltimer = setTimeout(() => { if (!mouseisover) hide() }, idletimer)
   }
 
   const windowmousemove = e => {
-    if (control === 'auto') show()
+    show()
   }
   const mousemove = e => {
     show()
   }
-  const hidecontrols = () => {
+  const hide = () => {
     showcontrols = false
   }
   const mouseover = e => {
@@ -34,6 +36,8 @@
   const mouseout = e => {
     mouseisover = false
   }
+
+  onMount(show)
 </script>
 
 <style>
