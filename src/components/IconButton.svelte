@@ -14,6 +14,7 @@
   export let relative = false
   export let className = ''
   export let topelement = undefined
+  export let badgecount = 0
 </script>
 
 <style>
@@ -60,6 +61,19 @@
     border-color: white;
     color: white;
   }
+  .badge {
+    position: absolute;
+    top: 0.1em;
+    right: -0.1em;
+    min-width: 1.2em;
+    height: 1.2em;
+    line-height: 1.2em;
+    border-radius: 0.6em;
+    font-size: 0.45em;
+    background-color: var(--badge-color);
+    color: var(--badge-color-text);
+    padding: 0.025em 0.3em 0 0.2em;
+  }
 </style>
 
 <button id={id} class="icon-button {className}" bind:this={topelement} on:click|preventDefault|stopPropagation
@@ -67,4 +81,7 @@
   class:left class:center class:right class:white class:relative
   aria-label={label || name}>
   <ion-icon name={name}></ion-icon>
+  {#if badgecount}
+    <div class="badge">{badgecount}</div>
+  {/if}
 </button>

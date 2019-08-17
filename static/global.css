@@ -46,6 +46,8 @@
   --accent-links: #0F5257;
   --success: #2afc98;
   --fail: #9b1d20;
+  --badge-color: var(--fail);
+  --badge-color-text: white;
 }
 
 body {

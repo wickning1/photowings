@@ -15,7 +15,6 @@
 	import FilterPanel from '../components/FilterPanel'
 	import Gallery from '../components/gallery/Gallery'
 	import Card from '../components/editablegallery/Card'
-	import BulkActions from '../components/editablegallery/BulkActions'
 	import SetHeader from '../components/SetHeader'
 	import Pagination from '../components/Pagination'
 	import PageHeader from '../components/PageHeader'
@@ -38,7 +37,6 @@
 		}}/>
 	</div>
 </PageHeader>
-<BulkActions />
 
 <SetHeader level=2>
 	<Gallery images={images.data} CardComponent={Card} />
