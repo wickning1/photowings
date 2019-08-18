@@ -11,14 +11,22 @@
 		position: fixed;
 		top: 0;
 		left: 0;
-		z-index: 100;
+		z-index: 50;
 		width: 100%;
 		display: flex;
 		align-items: center;
-		padding: 0px 20px;
+		padding: 0px 10px;
 	}
 	:global(.app-header > *) {
 		width: 33%;
+	}
+	@media (max-width: 400px) {
+		:global(.app-header > .app-name) {
+			width: 60%;
+		}
+		:global(.app-header > nav, .app-header > .icon-menu) {
+			width: 20%;
+		}
 	}
 	.app-name {
 		text-align: center;

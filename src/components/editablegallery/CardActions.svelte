@@ -1,6 +1,6 @@
 <script>
   import IconButton from '../IconButton'
-  import { selectedimages } from '../../stores/selectedimages'
+  import { selectedimages } from '../../stores/gallery'
   export let image
   export let hover = true
   const onclick = e => {
@@ -17,5 +17,5 @@
   $: selected = $selectedimages[image.id]
 </script>
 
-<IconButton name={selected ? 'checkbox-outline' : 'square-outline'}
+<IconButton name={selected ? 'check_box' : 'check_box_outline_blank'} className='select-button'
   label={selected ? 'deselect image' : 'add image to selected group'} relative on:click={onclick} />

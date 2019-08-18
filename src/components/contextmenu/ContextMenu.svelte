@@ -1,6 +1,5 @@
 <script>
-  import { which, data } from '../../stores/contextmenu'
-  import { selectednumber } from '../../stores/selectedimages'
+  import { selectednumber } from '../../stores/gallery'
   import SelectedImagesMenu from './SelectedImagesMenu'
 </script>
 

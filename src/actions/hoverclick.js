@@ -9,6 +9,7 @@ export default function hoverclick (node) {
     cancelAnimationFrame(timer)
     timer = requestAnimationFrame(() => {
       if (!hovering) {
+        if (touch) node.dispatchEvent(new CustomEvent('touchin'))
         hovering = true
         touch = false
         node.dispatchEvent(new CustomEvent('in', e))
@@ -51,6 +52,7 @@ export default function hoverclick (node) {
   node.addEventListener('focusout', fireOut)
   node.addEventListener('click', activate)
   node.addEventListener('keydown', keydown)
+  if (node.tabIndex < 0) node.tabIndex = 0
 
   return {
     destroy () {

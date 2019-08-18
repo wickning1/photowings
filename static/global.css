@@ -107,3 +107,9 @@ a:hover {
 .pure-form input[type="submit"] {
   padding: 5px 8px;
 }
+
+/*** Adjustments to components ***/
+.icon-menu-more {
+  background-color: var(--secondary-bg);
+  color: var(--secondary-text);
+}

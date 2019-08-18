@@ -31,7 +31,7 @@
 <div class="viewer-container" role="dialog" aria-label="detailed image viewer" style="width: {wide ? '100%' : 'auto'}; height: {wide ? 'auto' : '100%'};">
   <HoverControls>
     <IconButton name="create" relative white label="edit photo metadata" on:click={dismiss} />
-    <IconButton name="close-circle-outline" relative white label="close photo modal" on:click={dismiss} />
+    <IconButton name="cancel" relative white label="cancel modal photo viewer" on:click={dismiss} />
   </HoverControls>
   <img src="api/image/inline/{image.id}"
     alt={image.notes || ''}

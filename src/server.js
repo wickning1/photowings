@@ -12,7 +12,6 @@ const app = apiservice.app
 for (const model of ['album', 'app', 'group', 'image', 'person', 'role', 'tag', 'user']) {
   require('./models/' + model)
 }
-app.get('/favicon.ico', async (req, res) => { res.status(204).send() })
 app.use(express.static('static'))
 app.use(appauthorization())
 app.use(sapper.middleware({

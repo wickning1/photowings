@@ -17,6 +17,7 @@
     height: 100%;
     background-color: var(--modal-bg);
     overflow: auto;
+    z-index: 100;
   }
 </style>
 

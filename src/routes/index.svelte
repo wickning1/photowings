@@ -18,9 +18,11 @@
 	import SetHeader from '../components/SetHeader'
 	import Pagination from '../components/Pagination'
 	import PageHeader from '../components/PageHeader'
+	import { images as storeimages } from '../stores/gallery'
 	// later I want to bind form inputs to the query, but messing with the query
 	// object directly will make sapper crash
 	let querycopy = JSON.parse(JSON.stringify(query))
+	storeimages.set(images.data)
 </script>
 
 <svelte:head>

@@ -33,7 +33,7 @@
     replaceState({ filtershown: false })
   }
   const submit = async e => {
-    goto(qs('', query))
+    goto(qs('', { ...query, ...reset }))
     dismiss(e)
   }
 </script>
@@ -59,12 +59,12 @@
 <svelte:window on:click={outsideclick} />
 {#if shown}
   <FocusLock hidefocus={false} on:escape={dismiss} returnfocusto="#b{formid}">
-    <IconButton name="close-circle-outline" middle right label="hide filters" on:click={toggle} />
+    <IconButton name="cancel" middle right label="hide filters" on:click={toggle} />
     <form action="" method="GET" id={formid} class="pure-form pure-form-stacked"
       role="dialog" aria-label="choose filters"
       bind:this={form} on:submit|preventDefault={submit}>
       {#each preserve as param}
-        {#if query[param]}<input type="hidden" name={param} bind:value={query[param]} />{/if}
+        {#if query[param]}<input type="hidden" name={param} value={query[param]} />{/if}
       {/each}
       {#each Object.entries(reset) as [key, val]}
         <input type="hidden" name={key} value={val} />
@@ -82,5 +82,5 @@
     </form>
   </FocusLock>
 {:else}
-  <IconButton id="b{formid}" name='funnel' middle right label="show filters" on:click={toggle} />
+  <IconButton id="b{formid}" name='filter_list' middle right label="show filters" on:click={toggle} />
 {/if}

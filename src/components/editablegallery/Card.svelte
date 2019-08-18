@@ -1,7 +1,7 @@
 <script>
   import Card from '../gallery/Card'
   import CardActions from './CardActions'
-  import { selectionmode } from '../../stores/selectedimages'
+  import { selectionmode } from '../../stores/gallery'
   export let image
   export let topelement = null
 </script>

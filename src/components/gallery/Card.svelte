@@ -4,7 +4,7 @@
   import HasJS from '../noscript/HasJS'
   import Loading from '../Loading'
   import { onMount } from 'svelte'
-  import { which, data } from '../../stores/modal'
+  import { detailView } from '../../stores/gallery'
   import hoverclick from '../../actions/hoverclick'
   export let image
   export let showactions = false
@@ -20,8 +20,11 @@
     hover = false
   }
   const activate = e => {
-    which.update(w => 'imageviewer')
-    data.update(d => image)
+    if (showactions) topelement.querySelector('.select-button').click()
+    else detailView(image)
+  }
+  const touchin = e => {
+    if (showactions) topelement.querySelector('.select-button').click()
   }
 
   let src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
@@ -31,6 +34,7 @@
     src = realsrc
     loading = true
   })
+  $: alt = image.alt || 'photo, no description available'
 </script>
 
 <style>
@@ -56,18 +60,18 @@
     left: 0;
     width: 100%;
   }
-  img:focus {
+  figure:focus {
     outline: 3px solid blue;
   }
 </style>
 
-<figure use:hoverclick on:in={mouseover} on:out={mouseout} on:activate={activate}
+<figure use:hoverclick on:in={mouseover} on:out={mouseout} on:activate={activate} on:touchin={touchin} aria-label={alt}
   style="padding-top: {100 * image.height / image.width}%;" bind:this={topelement}>
   <HasJS>
     <img src={src}
-      alt={image.alt || 'photo, no description available'} width={image.width} height={image.height} tabindex=0
+      alt={alt} width={image.width} height={image.height}
       on:load={() => loading = false} />
-    <img slot="noscript" src={realsrc} alt={image.alt || 'photo, no description available'} width={image.width} height={image.height} tabindex=0 />
+    <img slot="noscript" src={realsrc} alt={alt} width={image.width} height={image.height} tabindex=0 />
   </HasJS>
   {#if loading}
     <Loading />

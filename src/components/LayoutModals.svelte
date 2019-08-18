@@ -1,19 +1,16 @@
 <script>
-  import { which, data } from '../stores/modal'
+  import { detailimage, cancelDetailView } from '../stores/gallery'
   import Modal from './Modal'
   import Viewer from './gallery/Viewer'
 
-  const dismiss = () => {
-    which.update(w => '')
-    data.update(d => {})
-  }
+  $: modalactive = $detailimage && true
 </script>
 
-<slot modalactive={$which && true}></slot>
-{#if $which}
-  <Modal on:dismiss={dismiss}>
-    {#if $which === 'imageviewer'}
-      <Viewer image={$data} on:dismiss={dismiss}/>
+<slot modalactive={modalactive}></slot>
+{#if modalactive}
+  <Modal on:dismiss={cancelDetailView}>
+    {#if $detailimage}
+      <Viewer image={$detailimage} on:dismiss={cancelDetailView}/>
     {/if}
   </Modal>
 {/if}

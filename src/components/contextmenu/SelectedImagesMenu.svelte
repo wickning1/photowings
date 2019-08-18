@@ -1,23 +1,28 @@
 <script>
   export let selectednumber
   import IconMenu from '../IconMenu'
+  import { selectAll, deselectAll, beginEditingAll } from '../../stores/gallery'
   $: icons = [
-    { name: 'create', badgecount: selectednumber }
+    { name: 'edit', label: `edit ${selectednumber} image${selectednumber === 1 ? '' : 's'}`, badgecount: selectednumber },
+    { name: 'done_all', label: 'select all' },
+    { name: 'close', label: 'deselect all' },
   ]
 
   function activate (e) {
     const which = e.detail
-    console.log(which)
+    if (which === 'edit') beginEditingAll()
+    if (which === 'done_all') selectAll()
+    if (which === 'close') deselectAll()
   }
   const keydown = e => {
-    if (selectednumber && (e.key === 'e' || e.keyCode === 69)) {
-      activate({ detail: 'create' })
-    }
+    if (e.key === 'a') selectAll()
+    if (e.key === 'e') beginEditingAll()
+    if (e.key === 'x') deselectAll()
   }
 </script>
 
 <svelte:window on:keydown={keydown} />
 <div class="sr-only" aria-live="assertive">
-  {selectednumber} image{selectednumber === 1 ? '' : 's'} selected press e to begin editing
+  {selectednumber} image{selectednumber === 1 ? '' : 's'} selected press e to begin editing, a to select all, x to cancel selections
 </div>
 <IconMenu icons={icons} on:activate={activate} />

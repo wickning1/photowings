@@ -12,6 +12,7 @@ export function a11yclick (node) {
 
   node.addEventListener('click', click)
   node.addEventListener('keydown', keydown)
+  if (node.tabIndex < 0) node.tabIndex = 0
 
   return {
     destroy () {
