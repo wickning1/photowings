@@ -1,5 +1,5 @@
 <script>
-  export let showsuccess = false
+  export let showvalidation = false
   export let errors = []
   export let id = _.randomid()
   export let name
@@ -16,7 +16,7 @@
 <div class="wrapper">
   <label for={id}>{label || _.ucfirst(name)}</label>
   <slot id={id}></slot>
-  {#if errors.length}
+  {#if showvalidation && errors.length}
     <div class="errors">
       {#each errors as error}
         <div class="error">{error}</div>

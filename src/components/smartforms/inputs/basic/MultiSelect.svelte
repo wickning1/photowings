@@ -3,6 +3,7 @@
   export let name
   export let id = ''
   export let value = []
+  export let showsuccess = false
 
   let selectelement
   onMount(async () => {

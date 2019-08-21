@@ -70,24 +70,22 @@
   }
 
   setContext(SMARTFORM, {
-    subscribeValue: name => {
-      return derived(formdata, $formdata => {
-        return _get($formdata, name)
-      })
-    },
-    subscribeErrors: name => {
-      return derived(errors, $errors => {
-        return _get($errors, name) || []
-      })
-    },
-    subscribeShowErrors: name => {
-      return derived(showerrors, $showerrors => {
-        return $showerrors[name]
-      })
-    },
-    blur,
-    setvalue,
-    register
+    subscribe: name => {
+      register(name)
+      return {
+        value: derived(formdata, $formdata => {
+          return _get($formdata, name)
+        }),
+        errors: derived(errors, $errors => {
+          return _get($errors, name) || []
+        }),
+        showvalidation: derived(showerrors, $showerrors => {
+          return $showerrors[name]
+        }),
+        blur: blur(name),
+        setvalue: setvalue(name)
+      }
+    }
   })
 </script>
 
