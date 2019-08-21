@@ -12,9 +12,9 @@
   let form
   const ids = {}
   for (const key of Object.keys(filters)) {
-    ids[key] = 'f' + _.generatestring(10)
+    ids[key] = _.randomid()
   }
-  const formid = 'f' + _.generatestring(10)
+  const formid = _.randomid()
   let shown = process.browser && state().filtershown
   const toggle = async e => {
     if (shown) dismiss(e)

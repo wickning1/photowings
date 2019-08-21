@@ -18,6 +18,7 @@
     "exif-reader": "^1.0.2",
     "face-api.js": "^0.20.1",
     "file-type": "^12.1.0",
+    "lodash": "^4.17.15",
     "tabbable": "^4.0.0",
     "geo-tz": "^5.0.5",
     "hex-to-binary": "^1.0.1",
@@ -27,7 +28,7 @@
     "sharp": "^0.23.0",
     "slim-select": "^1.23.0",
     "@tensorflow/tfjs": "^1.2.7",
-    "txstate-node-utils": "^2.8.8",
+    "txstate-node-utils": "^2.8.12",
     "ua-parser-js": "^0.7.20"
   },
   "devDependencies": {

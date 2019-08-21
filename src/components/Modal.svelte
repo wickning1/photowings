@@ -9,7 +9,7 @@
 </script>
 
 <style>
-  div {
+  .modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -19,10 +19,18 @@
     overflow: auto;
     z-index: 100;
   }
+  .modal-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 </style>
 
-<div on:click={function (e) { if (e.target === this) endmodal() }}>
-  <FocusLock on:escape={endmodal}>
-    <slot></slot>
-  </FocusLock>
+<div class="modal-backdrop" on:click={function (e) { if (e.target === this) endmodal() }}>
+  <div class="modal-container" role="dialog">
+    <FocusLock on:escape={endmodal}>
+      <slot></slot>
+    </FocusLock>
+  </div>
 </div>
