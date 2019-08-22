@@ -107,6 +107,9 @@
   const register = name => {
     registeredInputs.push(name)
   }
+  const deregister = name => {
+    registeredInputs = registeredInputs.filter(n => n !== name)
+  }
 
   setContext(SMARTFORM, {
     // this is the standard function an input will call to connect to the form
@@ -126,7 +129,8 @@
           return $showerrors[name]
         }),
         blur: blur(name),
-        setvalue: setvalue(name)
+        setvalue: setvalue(name),
+        unsubscribe: deregister(name)
       }
     }
   })

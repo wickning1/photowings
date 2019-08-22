@@ -4,9 +4,9 @@
   export let label = undefined
   export let id = _.randomid()
   import { SMARTFORM } from '../../core/Form'
-  import { getContext } from 'svelte'
+  import { getContext, onDestroy } from 'svelte'
   const { subscribe } = getContext(SMARTFORM)
-  const { value, errors, showvalidation, setvalue, blur } = subscribe(name)
+  const { value, errors, showvalidation, setvalue, blur, unsubscribe } = subscribe(name)
   $: bindvalue = $value
 
   import BasicLayout from '../shared/BasicLayout'
@@ -15,6 +15,7 @@
   function onchange () {
     setvalue(bindvalue)
   }
+  onDestroy(unsubscribe)
 </script>
 
 <BasicLayout showvalidation={$showvalidation} errors={$errors} id={id} name={name} label={label}>
