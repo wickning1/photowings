@@ -160,5 +160,5 @@
 
 <form class={className} on:submit|preventDefault={onsubmit}>
   {#if submiterror}<div class="danger">{submiterror}</div>{/if}
-  <slot></slot>
+  <slot submitting={submitlocked}></slot>
 </form>
