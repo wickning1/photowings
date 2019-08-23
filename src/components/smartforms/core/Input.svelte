@@ -1,7 +1,8 @@
 <script>
-  export let id
+  import _ from 'txstate-node-utils/lib/util'
   export let name
-  export let label = name.split(/\./).slice(-1)[0]
+  export let id
+  export let label = _.ucfirst(name.split(/\./).slice(-1)[0])
   export let InputComponent
   export let inputprops = {}
   export let LayoutComponent
@@ -18,8 +19,8 @@
   onDestroy(unsubscribe)
 </script>
 
-<LayoutComponent id={id} label={label} showvalidation={$showvalidation} errors={$errors} {...layoutprops}>
-  <InputComponent bind:value={bindvalue} showvalidation={$showvalidation}
+<LayoutComponent id={id} label={label} showvalidation={$showvalidation} errors={$errors} {...layoutprops} let:id>
+  <InputComponent id={id} name={name} bind:value={bindvalue} showvalidation={$showvalidation}
     errors={$errors} onchange={onchange} blur={blur} {...inputprops}>
     <slot></slot>
   </InputComponent>

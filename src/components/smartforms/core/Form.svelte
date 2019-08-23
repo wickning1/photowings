@@ -32,7 +32,7 @@
 
   // keep a list of registered inputs, ordered by DOM insertion order, so that
   // we can show errors *above* a specific input
-  const registeredInputs = []
+  let registeredInputs = []
 
   // if an error happens during submit, we need to display it inside the form
   let submiterror

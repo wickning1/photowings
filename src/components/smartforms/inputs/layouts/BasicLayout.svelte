@@ -1,10 +1,8 @@
 <script>
   export let showvalidation = false
   export let errors = []
+  export let label
   export let id = _.randomid()
-  export let name
-  export let label = undefined
-  import _ from 'txstate-node-utils/lib/util'
 </script>
 
 <style>
@@ -14,7 +12,7 @@
 </style>
 
 <div class="wrapper">
-  <label for={id}>{label || _.ucfirst(name)}</label>
+  <label for={id}>{label}</label>
   <slot id={id}></slot>
   {#if showvalidation && errors.length}
     <div class="errors">
