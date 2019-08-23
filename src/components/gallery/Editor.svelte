@@ -8,7 +8,7 @@
   }
   async function submit (formdata) {
     console.log('submit')
-    return true
+    return {}
   }
 </script>
 
