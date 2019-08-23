@@ -4,6 +4,8 @@
   export let id = ''
   export let value = []
   export let showsuccess = false
+  export let placeholder = 'Select Multiple'
+  export let hideSelectedOption = true
 
   let selectelement
   onMount(async () => {
@@ -11,8 +13,8 @@
     const SlimSelect = module.default
     new SlimSelect({
       select: selectelement,
-      placeholder: "Select Multiple",
-      hideSelectedOption: true
+      placeholder,
+      hideSelectedOption
     })
   })
 </script>
