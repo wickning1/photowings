@@ -64,11 +64,15 @@
     if (delayvalidation) await _.sleep(debouncetimer)
     if (validationversion === saveversion) {
       validationpending = false
-      const newerrors = await validate(currentformdata, name, currenterrors)
-      if (validationversion === saveversion) {
-        // when timeout expires, benefit of the doubt is over, show them their error
-        showerrors.update(showerrs => ({ ...showerrs, [name]: true }))
-        errors.set(newerrors || {})
+      try {
+        const newerrors = await validate(currentformdata, name, currenterrors)
+        if (validationversion === saveversion) {
+          // when timeout expires, benefit of the doubt is over, show them their error
+          showerrors.update(showerrs => ({ ...showerrs, [name]: true }))
+          errors.set(newerrors || {})
+        }
+      } catch (e) {
+        console.error(e)
       }
     }
   }
