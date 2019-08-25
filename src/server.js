@@ -6,12 +6,10 @@ import monhelp from 'txstate-node-utils/lib/mongoose'
 import UAParser from 'ua-parser-js'
 import appauthorization from './lib/appauthorization'
 import scanner from './lib/scanner'
+import './models/_index'
+import fixtures from './fixtures/_index'
 const app = apiservice.app
 
-// initialize models
-for (const model of ['album', 'app', 'group', 'image', 'person', 'role', 'tag', 'user']) {
-  require('./models/' + model)
-}
 app.use(express.static('static'))
 app.use(appauthorization())
 app.use(sapper.middleware({
@@ -34,5 +32,6 @@ app.use((error, req, res, next) => {
 })
 
 apiservice.start().then(async () => {
+  if (process.env.NODE_ENV === 'development') await fixtures()
   scanner()
-})
+}).catch(e => console.error('problem while scanning', e))
