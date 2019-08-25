@@ -24,6 +24,7 @@ function commonTags (images, getter) {
 export const editing = writable(false)
 export const editorready = writable(false)
 export const tags = writable([])
+export const people = writable([])
 export const editorpreload = derived(selectedimages, $selectedimages => {
   const images = Object.values($selectedimages)
   const tags = commonTags(images, image => image.tags)
@@ -65,6 +66,7 @@ export async function beginEditing () {
   editorready.set(false)
   editing.set(true)
   tags.set(await get('tag'))
+  people.set(await get('person'))
   editorready.set(true)
 }
 export function cancelEditing () {

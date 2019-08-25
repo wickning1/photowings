@@ -111,7 +111,7 @@
   const register = name => {
     registeredInputs.push(name)
   }
-  const deregister = name => {
+  const deregister = name => () => {
     registeredInputs = registeredInputs.filter(n => n !== name)
   }
 
@@ -148,7 +148,7 @@
       const newerrors = await submit(currentformdata)
       submiterror = undefined
       // all inputs should show errors
-      showerrors.set(registeredInputs.reduce((showerrs, regName) => {
+      showerrors.set(registeredInputs.reduce((showerrs, registeredname) => {
         showerrs[registeredname] = true
         return showerrs
       }, {}))

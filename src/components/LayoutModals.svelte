@@ -2,7 +2,7 @@
   import { detailimage, cancelDetailView, editing, cancelEditing } from '../stores/gallery'
   import Modal from './Modal'
   import Viewer from './gallery/Viewer'
-  import Editor from './gallery/Editor'
+  import Editor from './editablegallery/Editor'
 
   $: modalactive = ($detailimage || $editing) && true
   function cancelAnything () {

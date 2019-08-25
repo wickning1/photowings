@@ -32,4 +32,13 @@ PersonSchema.statics.populateFull = async function (target) {
   ])
 }
 
+PersonSchema.statics.getMany = async function (requser, query) {
+  const sort = query.sort ? { [query.sort]: query.desc ? -1 : 1 } : { name: 1 }
+  const where = [{ deleted: { $ne: true } }]
+  if (query.q) where.push({ name: { $regex: '^' + query.q, $options: 'i' } })
+  const results = await this.find({ $and: where }).sort(sort)
+  const data = await this.populateFull(results)
+  return data
+}
+
 module.exports = mongoose.model('Person', PersonSchema)

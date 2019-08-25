@@ -3,13 +3,12 @@
   export let id = undefined
   export let label = undefined
   export let validationuseful = false
-  export let disabled = false
   import Input from '../../core/Input'
   import BasicLayout from '../layouts/BasicLayout'
-  import MultiSelect from '../basic/MultiSelect'
+  import SingleLine from '../basic/SingleLine'
 </script>
 
 <Input id={id} name={name} label={label}
-  LayoutComponent={BasicLayout} InputComponent={MultiSelect} inputprops={{ validationuseful, disabled }}>
+  LayoutComponent={BasicLayout} InputComponent={SingleLine} inputprops={{ validationuseful }}>
   <slot></slot>
 </Input>

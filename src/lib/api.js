@@ -6,7 +6,6 @@ function host () {
 }
 
 function normalizeUrl (url, params) {
-  console.log()
   const obj = new URL(url, process.env.API_BASE || `${host()}/api/`)
   return helpers.qs(obj.toString(), params)
 }
