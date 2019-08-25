@@ -5,6 +5,7 @@
   import Editor from './editablegallery/Editor'
 
   $: modalactive = ($detailimage || $editing) && true
+  $: lockbackdrop = $editing && true
   function cancelAnything () {
     if ($detailimage) cancelDetailView()
     else if ($editing) cancelEditing()
@@ -13,11 +14,11 @@
 
 <slot modalactive={modalactive}></slot>
 {#if modalactive}
-  <Modal on:dismiss={cancelAnything}>
+  <Modal on:dismiss={cancelAnything} lockbackdrop={lockbackdrop}>
     {#if $detailimage}
-      <Viewer image={$detailimage} on:dismiss />
+      <Viewer image={$detailimage} on:dismiss={cancelAnything} />
     {:else if $editing}
-      <Editor on:dismiss />
+      <Editor on:dismiss={cancelAnything} />
     {/if}
   </Modal>
 {/if}

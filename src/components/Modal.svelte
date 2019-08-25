@@ -1,8 +1,12 @@
 <script>
+  export let lockbackdrop = false
   import FocusLock from './FocusLock'
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
 
+  function backdropclick (e) {
+    if (e.target === this && !lockbackdrop) endmodal()
+  }
   const endmodal = () => {
     dispatch('dismiss')
   }
@@ -27,7 +31,7 @@
   }
 </style>
 
-<div class="modal-backdrop" on:click={function (e) { if (e.target === this) endmodal() }}>
+<div class="modal-backdrop" on:click={backdropclick}>
   <div class="modal-container" role="dialog">
     <FocusLock on:escape={endmodal}>
       <slot></slot>
