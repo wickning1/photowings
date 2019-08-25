@@ -3,11 +3,12 @@
   import HoverControls from '../HoverControls'
   import HasJS from '../noscript/HasJS'
   import Loading from '../Loading'
-  import { onMount } from 'svelte'
   import { detailView } from '../../stores/gallery'
   import hoverclick from '../../actions/hoverclick'
+  import intersect from '../../actions/intersect'
   export let image
   export let showactions = false
+  export let unloadimages = false
   export let topelement = null
   export let DetailsComponent = CardDetails
   export let ActionsComponent = undefined
@@ -27,13 +28,21 @@
     if (showactions) topelement.querySelector('.select-button').click()
   }
 
-  let src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+  // lazy loading
+  let fakesrc = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+  let src = fakesrc
   let realsrc = `api/image/inline/${image.id}`
   let loading = false
-  onMount(() => {
-    src = realsrc
-    loading = true
-  })
+  function intersectin (e) {
+    if (src !== realsrc) {
+      src = realsrc
+      loading = true
+    }
+  }
+  function intersectout (e) {
+    if (unloadimages) src = fakesrc
+  }
+
   $: alt = image.alt || 'photo, no description available'
 </script>
 
@@ -65,8 +74,9 @@
   }
 </style>
 
-<figure use:hoverclick on:in={mouseover} on:out={mouseout} on:activate={activate} on:touchin={touchin} aria-label={alt}
-  style="padding-top: {100 * image.height / image.width}%;" bind:this={topelement}>
+<figure use:hoverclick on:in={mouseover} on:out={mouseout} on:activate={activate} on:touchin={touchin}
+  use:intersect on:intersectin={intersectin} on:intersectout={intersectout}
+  aria-label={alt} style="padding-top: {100 * image.height / image.width}%;" bind:this={topelement}>
   <HasJS>
     <img src={src}
       alt={alt} width={image.width} height={image.height}
