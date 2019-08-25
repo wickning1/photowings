@@ -1,7 +1,11 @@
 /* global CustomEvent */
 export default function typing (node) {
+  let lastvalue = node.value
   function keyup (e) {
-    if (!e.metaKey && !e.ctrlKey && !e.altKey) node.dispatchEvent(new CustomEvent('typing'))
+    if (node.value !== lastvalue) {
+      node.dispatchEvent(new CustomEvent('typing'))
+      lastvalue = node.value
+    }
   }
   node.addEventListener('keyup', keyup)
   return {
