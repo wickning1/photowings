@@ -12,7 +12,7 @@ import { phash } from './phash'
 import Image from '../models/image'
 import Album from '../models/album'
 import { defaultTZ } from './helpers'
-import * as face from './face'
+// import * as face from './face'
 const fsp = fs.promises
 geoTz.preCache()
 
@@ -109,8 +109,8 @@ async function handleImage (filepath, scanid) {
       }
       image.width = meta.width
       image.height = meta.height
-      const faces = await face.getFaces(filepath)
-      console.log(faces)
+      // const faces = await face.getFaces(filepath)
+      // console.log(faces)
       image.phash = shelpers.binaryToHash(await phash(img))
       if (!image.file.taken) {
         image.file.taken = fstat.mtime
