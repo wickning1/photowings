@@ -18,6 +18,7 @@
 </script>
 
 <style>
+  input { width: 100%; }
   .valid {
     border: 1px solid var(--success);
   }

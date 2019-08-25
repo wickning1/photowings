@@ -48,6 +48,20 @@
   .valid {
     border: 1px solid var(--success);
   }
+  :global(.ss-value) {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+  }
+  :global(.ss-add) {
+    margin-top: 0 !important;
+    align-items: center;
+  }
+  :global(.ss-disabled) {
+    line-height: normal !important;
+  }
+  :global(.ss-value-delete) {
+    padding: 0 3px;
+  }
   :global(.ss-value-delete:focus) {
     outline: 1px solid blue;
   }
