@@ -1,7 +1,7 @@
 <script>
   export let selectednumber
   import IconMenu from '../IconMenu'
-  import { selectAll, deselectAll, beginEditing } from '../../stores/gallery'
+  import { selectAll, deselectAll, beginEditing, editing } from '../../stores/gallery'
   $: icons = [
     { name: 'edit', label: `edit ${selectednumber} image${selectednumber === 1 ? '' : 's'}`, badgecount: selectednumber },
     { name: 'done_all', label: 'select all' },
@@ -15,9 +15,11 @@
     if (which === 'close') deselectAll()
   }
   const keydown = e => {
-    if (e.key === 'a') selectAll()
-    if (e.key === 'e') beginEditing()
-    if (e.key === 'x') deselectAll()
+    if (!$editing) {
+      if (e.key === 'a') selectAll()
+      if (e.key === 'e') beginEditing()
+      if (e.key === 'x') deselectAll()
+    }
   }
 </script>
 
