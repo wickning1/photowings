@@ -13,11 +13,22 @@
   import _get from 'lodash/get'
   import _set from 'lodash/set'
   import _ from 'txstate-node-utils/lib/util'
+  import { aggressivederived } from '../../../lib/helpers'
 
   // create a store for the form data, subscribe to it for internal use
   let currentformdata = JSON.parse(JSON.stringify(preload))
+  let formversion = 0
+  let validatedversion = -1
+  let lastjson = ''
   const formdata = writable(currentformdata)
-  formdata.subscribe(fd => { currentformdata = fd })
+  formdata.subscribe(fd => {
+    const json = JSON.stringify(fd)
+    if (lastjson !== json) {
+      lastjson = json
+      currentformdata = fd
+      formversion++
+    }
+  })
 
   // create a store for whether each input should be showing its validation status
   const showerrors = writable({})
@@ -27,9 +38,6 @@
   const errors = writable(currenterrors)
   errors.subscribe(errs => currenterrors = errs)
 
-  // keep a validationversion number to help with async concurrency issues
-  let validationversion = 0
-
   // keep a list of registered inputs, ordered by DOM insertion order, so that
   // we can show errors *above* a specific input
   let registeredInputs = []
@@ -37,15 +45,14 @@
   // if an error happens during submit, we need to display it inside the form
   let submiterror
 
-  // blur function needs to know when there is a pending debounce for validation
-  let validationpending = false
-
   async function validatechange (name, delayvalidation) {
     /*** figure out which inputs should be showing errors ***/
     showerrors.update(showerrs => {
       // give the user a brief period of benefit
-      // of the doubt until validation finishes
-      showerrs[name] = false
+      // of the doubt until validation finishes, but if
+      // validation on this version has already been done, immediately
+      // show errors
+      showerrs[name] = formversion === validatedversion
       // show errors for any inputs that are above this one in the page
       for (const registeredname of registeredInputs) {
         if (registeredname === name) break
@@ -54,19 +61,20 @@
       return showerrs
     })
 
-    // use validationversion to make sure we never use the errors object from an outdated validation
+    // bail out if this version has already been validated
+    if (formversion === validatedversion) return
+
+    // use formversion to make sure we never use the errors object from an outdated validation
     // just wait for the final validation to finish
-    validationversion++
-    const saveversion = validationversion
+    const saveversion = formversion
     // if we expect more changes, e.g. the user is currently typing, delay validation
     // for half a second to reduce traffic to the server
-    validationpending = true
     if (delayvalidation) await _.sleep(debouncetimer)
-    if (validationversion === saveversion) {
-      validationpending = false
+    if (formversion === saveversion) {
       try {
+        validatedversion = formversion
         const newerrors = await validate(currentformdata, name, currenterrors)
-        if (validationversion === saveversion) {
+        if (formversion === saveversion) {
           // when timeout expires, benefit of the doubt is over, show them their error
           showerrors.update(showerrs => ({ ...showerrs, [name]: true }))
           errors.set(newerrors || {})
@@ -87,21 +95,7 @@
 
   // when an input loses focus, it should show errors immediately
   const blur = name => async () => {
-    // if we are currently waiting for a validation debounce, speed it up
-    // if we have never validated we need to trigger one, in case the field
-    // that just lost focus is required
-    if (validationpending || validationversion === 0) await validatechange(name, false)
-    else {
-      // if no need to validate, just show errors for any inputs that are
-      // above this one in the page, including this one
-      showerrors.update(showerrs => {
-        for (const registeredname of registeredInputs) {
-          showerrs[registeredname] = true
-          if (registeredname === name) break
-        }
-        return showerrs
-      })
-    }
+    await validatechange(name, false)
   }
 
   // register inputs in order, so that we can always show errors above
@@ -123,13 +117,13 @@
       // automatically register new subscribers
       register(name)
       return {
-        value: derived(formdata, $formdata => {
+        value: aggressivederived(formdata, $formdata => {
           return _get($formdata, name)
         }),
-        errors: derived(errors, $errors => {
+        errors: aggressivederived(errors, $errors => {
           return _get($errors, name) || []
         }),
-        showvalidation: derived(showerrors, $showerrors => {
+        showvalidation: aggressivederived(showerrors, $showerrors => {
           return $showerrors[name]
         }),
         blur: blur(name),

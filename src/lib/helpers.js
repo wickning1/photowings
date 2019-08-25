@@ -2,6 +2,8 @@
 import _ from 'txstate-node-utils/lib/util'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
+import { writable } from 'svelte/store'
+import equal from 'fast-deep-equal'
 dayjs.extend(customParseFormat)
 
 export const defaultTZ = process && !process.env.TZ ? 'America/Chicago' : Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -69,4 +71,17 @@ export function replaceState (replace) {
 
 export function state () {
   return location.hash.slice(1).split('&').filter(p => p).map(p => (p.includes('=') ? p.split('=') : [p, true])).reduce((acc, curr) => ({ ...acc, [curr[0]]: curr[1] }), {})
+}
+
+export function aggressivederived (origin, cb) {
+  const dest = writable(undefined)
+  let current
+  origin.subscribe(data => {
+    const reduced = cb(data)
+    if (!equal(reduced, current)) {
+      current = reduced
+      dest.set(reduced)
+    }
+  })
+  return dest
 }

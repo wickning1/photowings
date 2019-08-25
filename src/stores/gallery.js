@@ -1,12 +1,13 @@
-import { writable, derived } from 'svelte/store'
+import { writable } from 'svelte/store'
 import { get } from '../lib/api'
+import { aggressivederived } from '../lib/helpers'
 
 export const selectedimages = writable({})
-export const selectednumber = derived(selectedimages, $selectedimages => Object.keys($selectedimages).length)
-export const selectionmode = derived(selectednumber, $selectednumber => $selectednumber > 0)
+export const selectednumber = aggressivederived(selectedimages, $selectedimages => Object.keys($selectedimages).length)
+export const selectionmode = aggressivederived(selectednumber, $selectednumber => $selectednumber > 0)
 
 export const images = writable([])
-export const imagestotal = derived(images, $images => $images.length)
+export const imagestotal = aggressivederived(images, $images => $images.length)
 let $images
 images.subscribe(imgs => { $images = imgs })
 
@@ -25,7 +26,7 @@ export const editing = writable(false)
 export const editorready = writable(false)
 export const tags = writable([])
 export const people = writable([])
-export const editorpreload = derived(selectedimages, $selectedimages => {
+export const editorpreload = aggressivederived(selectedimages, $selectedimages => {
   const images = Object.values($selectedimages)
   const tags = commonTags(images, image => image.tags)
   const peoplerelated = commonTags(images, image => image.people_related)

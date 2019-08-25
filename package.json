@@ -14,6 +14,7 @@
     "canvas": "^2.6.0",
     "chokidar": "^3.0.2",
     "dayjs": "^1.8.15",
+    "fast-deep-equal": "^2.0.1",
     "exif-orientation-math": "^1.0.0",
     "exif-reader": "^1.0.2",
     "face-api.js": "^0.20.1",
