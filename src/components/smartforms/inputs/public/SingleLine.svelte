@@ -10,5 +10,4 @@
 
 <Input id={id} name={name} label={label}
   LayoutComponent={BasicLayout} InputComponent={SingleLine} inputprops={{ validationuseful }}>
-  <slot></slot>
 </Input>

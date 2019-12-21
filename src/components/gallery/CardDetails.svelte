@@ -5,7 +5,7 @@
   export let hover
 </script>
 
-<Header class="name">{image.name}</Header>
+<Header class="name">{image.title}</Header>
 {#if hover}
   <div class="taken">{photoTime(image.taken)}</div>
   {#if image.latitude && image.longitude}

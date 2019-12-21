@@ -71,7 +71,7 @@ async function handleImage (filepath, scanid) {
   const albumpath = path.dirname(filepath)
   const [image, album, fstat] = await Promise.all([
     Image.findOneAndUpdate({ filepath }, { $set: { filepath } }, { upsert: true, setDefaultsOnInsert: true, new: true }),
-    Album.findOneAndUpdate({ filepath: albumpath }, { $set: { filepath: albumpath } }, { upsert: true, setDefaultsOnInsert: true, new: true }),
+    Album.findOneAndUpdate({ filepath: albumpath }, { $set: { filepath: albumpath, name: path.basename(albumpath) } }, { upsert: true, setDefaultsOnInsert: true, new: true }),
     fsp.stat(filepath)
   ])
   try {

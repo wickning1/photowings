@@ -13,7 +13,6 @@
   function keydown (e) {
     dispatch('update')
   }
-
   $: valid = validationuseful && showvalidation && !errors.length
 </script>
 

@@ -1,7 +1,7 @@
 <script>
   import { getContext } from 'svelte'
-  const { getLevel } = getContext('headerlevel')
-  const level = getLevel()
+  const ctx = getContext('headerlevel')
+  export let level = ctx ? ctx.getLevel() : 2
 </script>
 
 {#if level == 1}

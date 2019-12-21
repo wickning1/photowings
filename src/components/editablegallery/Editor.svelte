@@ -1,9 +1,10 @@
 <script>
-  import { editorpreload, tags, selectednumber } from '../../stores/gallery'
+  import { editorpreload, tags, selectednumber, selectedimages } from '../../stores/gallery'
   import MultiSelect from '../smartforms/inputs/public/MultiSelect'
   import SingleLine from '../smartforms/inputs/public/SingleLine'
   import Form from '../smartforms/core/Form'
   import { createEventDispatcher } from 'svelte'
+  import { put } from '../../lib/api'
   const dispatch = createEventDispatcher()
   async function validate (formdata) {
     console.log('validate', formdata)
@@ -11,9 +12,10 @@
   }
   async function submit (formdata) {
     console.log('submit')
+    await put('image', null, { ids: Object.keys($selectedimages), ...formdata })
     return {}
   }
-  function dismiss() {
+  function dismiss () {
     dispatch('dismiss')
   }
 </script>
@@ -39,7 +41,7 @@
   {#if $selectednumber === 1}
     <SingleLine name="title"/>
   {/if}
-  <MultiSelect name="tags">
+  <MultiSelect name="tags" allowadd>
     {#each $tags as tag}
       <option value={tag.id}>{tag.name}</option>
     {/each}

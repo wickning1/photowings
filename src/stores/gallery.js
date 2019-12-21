@@ -14,13 +14,13 @@ images.subscribe(imgs => { $images = imgs })
 export const detailimage = writable(undefined)
 
 function commonTags (images, getter) {
-  const tags = {}
+  const tagcount = {}
   for (const image of images) {
     for (const tag of getter(image) || []) {
-      tags[tag] = true
+      tagcount[tag.id] = ++tagcount[tag.id] || 1
     }
   }
-  return Object.keys(tags)
+  return Object.entries(tagcount).filter(([tag, count]) => count === images.length).map(([tag, count]) => tag)
 }
 export const editing = writable(false)
 export const editorready = writable(false)

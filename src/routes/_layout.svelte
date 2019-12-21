@@ -40,7 +40,7 @@
 			<div class="app-name">PhotoWings</div>
 			<ContextMenu />
 		</header>
-		<main aria-hidden={modalactive} style="margin-top: {headerheight}px;">
+		<main aria-hidden={modalactive} style="margin-top: {headerheight}px; height: calc(100vh - {headerheight}px);">
 			<slot></slot>
 		</main>
 	</LayoutModals>

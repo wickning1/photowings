@@ -17,10 +17,14 @@
   export let badgecount = 0
   export let label = name + (badgecount > 0 ? `, ${badgecount}` : '')
   export let text = ''
+  export let disabled = false
+  export let href = undefined
+  import { goto } from '@sapper/app'
+  function linkclick() { goto(href) }
 </script>
 
 <style>
-  button {
+  .icon-button {
     position: absolute;
     display: inline-block;
     padding: 8px;
@@ -29,8 +33,9 @@
     color: inherit;
     background-color: transparent;
     cursor: pointer;
+    text-decoration: none;
   }
-  button i {
+  .icon-button i {
     display: block;
   }
   .relative {
@@ -62,6 +67,9 @@
     border-color: white;
     color: white;
   }
+  .disabled {
+    color: gray;
+  }
   .badge {
     position: absolute;
     top: 0.1em;
@@ -88,14 +96,30 @@
   }
 </style>
 
-<button id={id} class="icon-button {className}" bind:this={topelement} on:click|preventDefault|stopPropagation
-  class:large class:border class:top class:middle class:bottom
-  class:left class:center class:right class:white class:relative>
-  <i class="material-icons{outline ? '-outlined' : ''}">{name}<span class="sr-only">{label}</span></i>
-  {#if badgecount}
-    <div class="badge" aria-hidden="true">{badgecount}</div>
-  {/if}
-  {#if text}
-    <span class="text">{text}</span>
-  {/if}
-</button>
+{#if href}
+  <a id={id} class="icon-button {className}" bind:this={topelement} href={href} on:click|stopPropagation|preventDefault={linkclick}
+    class:large class:border class:top class:middle class:bottom
+    class:left class:center class:right class:white class:relative
+    class:disabled disabled={disabled}>
+    <i class="material-icons{outline ? '-outlined' : ''}">{name}<span class="sr-only">{label}</span></i>
+    {#if badgecount}
+      <div class="badge" aria-hidden="true">{badgecount}</div>
+    {/if}
+    {#if text}
+      <span class="text">{text}</span>
+    {/if}
+  </a>
+{:else}
+  <button id={id} class="icon-button {className}" bind:this={topelement} on:click|preventDefault|stopPropagation
+    class:large class:border class:top class:middle class:bottom
+    class:left class:center class:right class:white class:relative
+    class:disabled disabled={disabled}>
+    <i class="material-icons{outline ? '-outlined' : ''}">{name}<span class="sr-only">{label}</span></i>
+    {#if badgecount}
+      <div class="badge" aria-hidden="true">{badgecount}</div>
+    {/if}
+    {#if text}
+      <span class="text">{text}</span>
+    {/if}
+  </button>
+{/if}

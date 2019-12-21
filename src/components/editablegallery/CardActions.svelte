@@ -17,5 +17,6 @@
   $: selected = $selectedimages[image.id]
 </script>
 
-<IconButton name={selected ? 'check_box' : 'check_box_outline_blank'} className='select-button'
+<IconButton name={selected ? 'check_box' : 'check_box_outline_blank'}
   label={selected ? 'deselect image' : 'add image to selected group'} relative on:click={onclick} />
+<IconButton name='create' label='edit image' relative href='image/{image.id}/edit' />

@@ -36,7 +36,7 @@ export function parampairs (params, sep = '?') {
   for (const key of Object.keys(params)) {
     if (Array.isArray(params[key])) {
       for (const val of params[key]) {
-        paramstrings.push(`${encodeURIComponent(key)}[]=${encodeURIComponent(val)}`)
+        paramstrings.push(`${encodeURIComponent(key)}=${encodeURIComponent(val)}`)
       }
     } else if (params[key] === true && sep === '#') {
       paramstrings.push(encodeURIComponent(key))

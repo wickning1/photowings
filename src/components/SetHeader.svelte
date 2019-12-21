@@ -1,8 +1,9 @@
 <script>
-  import { setContext } from 'svelte'
-  export let level = 2
+  import { getContext, setContext } from 'svelte'
+  const ctx = getContext('headerlevel')
+  export let below = ctx ? ctx.getLevel() : 0
   setContext('headerlevel', {
-    getLevel: () => level
+    getLevel: () => parseInt(below) + 1
   })
 </script>
 

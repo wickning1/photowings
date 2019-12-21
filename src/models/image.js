@@ -99,7 +99,8 @@ const ImageSchema = new OverrideSchema({
   album: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: 'Album',
-    required: true
+    required: true,
+    index: true
   },
   people_featured: [{
     type: mongoose.SchemaTypes.ObjectId,
@@ -111,7 +112,8 @@ const ImageSchema = new OverrideSchema({
   }],
   tags: [{
     type: mongoose.SchemaTypes.ObjectId,
-    ref: 'Tag'
+    ref: 'Tag',
+    index: true
   }],
   deleted: {
     type: Boolean,
@@ -136,7 +138,7 @@ ImageSchema.methods.partial = function (requser) {
     id: this.id,
     width: swapdims ? this.height : this.width,
     height: swapdims ? this.width : this.height,
-    name: this.name || nameToTitle(path.basename(this.filepath, path.extname(this.filepath))),
+    title: this.name || nameToTitle(path.basename(this.filepath, path.extname(this.filepath))),
     description: this.description,
     taken: this.takenLocal(),
     album: this.album.partial(requser)
@@ -156,13 +158,37 @@ ImageSchema.methods.full = function (requser) {
       ...this.people_related.map(p => p.name)
     ].join(', '),
     tags: this.tags.map(t => t.partial(requser)),
-    people_featured: this.people_featured || [],
-    people_related: this.people_related || [],
+    people_featured: this.people_featured,
+    people_related: this.people_related,
     ...(!_.isEmpty(this.location) ? {
       longitude: this.location.coordinates[0],
       latitude: this.location.coordinates[1]
     } : {})
   }
+}
+
+ImageSchema.methods.fromJson = async function (json, requser) {
+  const Tag = mongoose.model('Tag')
+  if (json.tags) {
+    const finaltags = []
+    const newtags = []
+    for (const tag of json.tags) {
+      const existingtag = this.tags.find(t => t.id === tag.id)
+      if (existingtag) {
+        finaltags.push(existingtag)
+      } else if (mongoose.Types.ObjectId.isValid(tag.id)) {
+        newtags.push(tag.id)
+      } else {
+        finaltags.push(new Tag({ name: tag.id }))
+      }
+    }
+    if (newtags.length) {
+      const populatednewtags = await Tag.find({ _id: { $in: newtags } })
+      finaltags.push(...populatednewtags)
+    }
+    this.tags = finaltags
+  }
+  if (json.title) this.name = json.title
 }
 
 ImageSchema.statics.populatePartial = function () {
@@ -183,22 +209,40 @@ ImageSchema.statics.populateFull = async function (target) {
   ])
 }
 
+ImageSchema.statics.getById = async function (id, requser) {
+  const image = await this.findById(id)
+  await this.populateFull(image)
+  return image
+}
+
+function filterList (list) {
+  list = _.toArray(list)
+  const listwithoutnone = list.filter(itm => itm !== '-1')
+  return { hasNone: listwithoutnone.length !== list.length, list: listwithoutnone }
+}
+
 ImageSchema.statics.getMany = async function (requser, query) {
-  const limit = query.pp || 50
+  const limit = query.pp || 100
   const offset = ((query.p || 1) - 1) * limit
   const sort = query.sort ? { [query.sort]: query.desc ? -1 : 1 } : { taken: 1 }
   const where = [{ deleted: { $ne: true } }]
+  if (query.id) where.push({ _id: { $in: _.toArray(query.id) } })
   if (query.album) where.push({ album: query.album })
+  if (query.tagsmay) {
+    const or = []
+    const { list, hasNone } = filterList(query.tagsmay)
+    if (hasNone) or.push({ tags: { $eq: [] } })
+    if (list.length) or.push({ tags: { $in: list } })
+    if (or.length) where.push({ $or: or })
+  }
+  if (query.tagsmust) where.push({ tags: { $all: _.toArray(query.tagsmust) } })
+  if (query.tagsnone) where.push({ tags: { $nin: _.toArray(query.tagsmust) } })
   const results = await this.find({ $and: where }).skip(offset).limit(limit).sort(sort)
   const [count, data] = await Promise.all([
     this.countDocuments({ $and: where }),
     this.populateFull(results)
   ])
   return shelpers.apiResponse(count, data, limit)
-}
-
-ImageSchema.statics.fromJson = function (requser, json) {
-  // read json and add data to image
 }
 
 ImageSchema.methods.setLocation = function (latitude, longitude, override = true) {
@@ -214,7 +258,7 @@ ImageSchema.methods.takenLocal = function () {
   return moment(this.taken).tz(this.location ? this.location.timeZone : defaultTZ).format('YYYY-MM-DDTHH:mm:ssZZ')
 }
 
-ImageSchema.pre('validate', function () {
+ImageSchema.pre('validate', async function () {
   for (const key of Object.keys(SubOverrideSchema.paths).filter(p => !p.includes('.'))) {
     this[key] = this.overrides[key] || this.file[key]
   }

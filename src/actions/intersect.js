@@ -15,7 +15,7 @@ function getObserver () {
       for (const ele of offscreen) {
         if (!onscreen.has(ele)) ele.dispatchEvent(new CustomEvent('intersectout'))
       }
-    }, { rootMargin: '30px' })
+    }, { rootMargin: '200px' })
   }
   return globalobserver
 }

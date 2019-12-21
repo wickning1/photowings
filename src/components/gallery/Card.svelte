@@ -30,17 +30,22 @@
 
   // lazy loading
   let fakesrc = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
-  let src = fakesrc
-  let realsrc = `api/image/inline/${image.id}`
+  let src = `api/image/inline/${image.id}`
+  let onscreen = false
   let loading = false
+  let timer
   function intersectin (e) {
-    if (src !== realsrc) {
-      src = realsrc
-      loading = true
-    }
+    cancelAnimationFrame(timer)
+    timer = requestAnimationFrame(() => {
+      loading = !onscreen
+      onscreen = true
+    })
   }
   function intersectout (e) {
-    if (unloadimages) src = fakesrc
+    cancelAnimationFrame(timer)
+    timer = requestAnimationFrame(() => {
+      if (unloadimages) onscreen = false
+    })
   }
 
   $: alt = image.alt || 'photo, no description available'
@@ -78,10 +83,10 @@
   use:intersect on:intersectin={intersectin} on:intersectout={intersectout}
   aria-label={alt} style="padding-top: {100 * image.height / image.width}%;" bind:this={topelement}>
   <HasJS>
-    <img src={src}
+    <img src={onscreen ? src : fakesrc}
       alt={alt} width={image.width} height={image.height}
       on:load={() => loading = false} />
-    <img slot="noscript" src={realsrc} alt={alt} width={image.width} height={image.height} tabindex=0 />
+    <img slot="noscript" src={src} alt={alt} width={image.width} height={image.height} tabindex=0 />
   </HasJS>
   {#if loading}
     <Loading />

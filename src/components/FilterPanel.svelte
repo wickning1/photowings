@@ -10,6 +10,8 @@
   import FocusLock from './FocusLock'
   import MultiSelect from './MultiSelect'
   let form
+  $: querycopy = JSON.stringify(query)
+  $: workingcopy = JSON.parse(querycopy)
   const ids = {}
   for (const key of Object.keys(filters)) {
     ids[key] = _.randomid()
@@ -30,10 +32,11 @@
   }
   const dismiss = (e) => {
     shown = false
+    workingcopy = JSON.parse(querycopy)
     replaceState({ filtershown: false })
   }
   const submit = async e => {
-    goto(qs('', { ...query, ...reset }))
+    goto(qs('', { ...workingcopy, ...reset }))
     dismiss(e)
   }
 </script>
@@ -64,16 +67,16 @@
       role="dialog" aria-label="choose filters"
       bind:this={form} on:submit|preventDefault={submit}>
       {#each preserve as param}
-        {#if query[param]}<input type="hidden" name={param} value={query[param]} />{/if}
+        {#if workingcopy[param]}<input type="hidden" name={param} value={workingcopy[param]} />{/if}
       {/each}
       {#each Object.entries(reset) as [key, val]}
         <input type="hidden" name={key} value={val} />
       {/each}
       {#each Object.entries(filters) as [name, settings], idx}
         {#if settings.values}
-          <MultiSelect id={ids[name]} name={name} bind:value={query[name]} label="{settings.name || _.ucfirst(name)}:">
+          <MultiSelect id={ids[name]} name={name} bind:value={workingcopy[name]} label="{settings.label || _.ucfirst(name)}:">
             {#each settings.values as { val, label }}
-              <option value={val} selected={val === query[name]}>{label || val}</option>
+              <option value={val}>{label || val}</option>
             {/each}
           </MultiSelect>
         {/if}

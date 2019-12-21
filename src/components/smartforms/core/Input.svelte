@@ -11,13 +11,16 @@
   import { getContext, onDestroy } from 'svelte'
   const { subscribe } = getContext(SMARTFORM)
   const { value, errors, showvalidation, setvalue, blur, unsubscribe } = subscribe(name)
-  $: bindvalue = $value
+  let bindvalue
+  $: if ($value) bindvalue = $value
 
-  function onchange () {
-    setvalue(bindvalue)
+  function onchange (e) {
+    if (e.detail) setvalue(e.detail)
+    else setvalue(bindvalue)
   }
-  function update () {
-    setvalue(bindvalue, true)
+  function update (e) {
+    if (e.detail) setvalue(e.detail, true)
+    else setvalue(bindvalue, true)
   }
   onDestroy(unsubscribe)
 </script>

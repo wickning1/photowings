@@ -1,16 +1,18 @@
 <script context="module">
 	import { fetch } from '../lib/helpers'
 	export async function preload({ params, query }, session) {
-		const [ images, albums ] = await Promise.all([
+		const [ images, albums, tags ] = await Promise.all([
 			fetch(this, 'api/image', query),
-			fetch(this, 'api/album')
+			fetch(this, 'api/album'),
+			fetch(this, 'api/tag')
 		])
-		return { images, albums, query }
+		return { images, albums, tags, query }
 	}
 </script>
 <script>
 	export let images = {}
 	export let albums = []
+	export let tags = []
 	export let query = {}
 	import FilterPanel from '../components/FilterPanel'
 	import Gallery from '../components/gallery/Gallery'
@@ -21,8 +23,9 @@
 	import { images as storeimages } from '../stores/gallery'
 	// later I want to bind form inputs to the query, but messing with the query
 	// object directly will make sapper crash
-	let querycopy = JSON.parse(JSON.stringify(query))
-	storeimages.set(images.data)
+	$: querycopy = JSON.parse(JSON.stringify(query))
+	$: storeimages.set(images.data)
+	$: taglist = tags.map(t => ({ val: t.id, label: t.name }))
 </script>
 
 <svelte:head>
@@ -34,13 +37,25 @@
 	<div slot="extra">
 		<FilterPanel query={querycopy} preserve={['pp', 'sort']} reset={{ p: 1 }} filters={{
 			album: {
-				values: albums.map(a => ({ val: a.id, label: a.filepath }))
+				values: albums.map(a => ({ val: a.id, label: a.name }))
+			},
+			tagsmay: {
+				label: 'Any of these tags',
+				values: [{ val: -1, label: 'No Tags' }, ...taglist]
+			},
+			tagsmust: {
+				label: 'All of these tags',
+				values: taglist
+			},
+			tagsnone: {
+				label: 'None of these tags',
+				values: taglist
 			}
 		}}/>
 	</div>
 </PageHeader>
 
-<SetHeader level=2>
+<SetHeader below={1}>
 	<Gallery images={images.data} CardComponent={Card} />
 </SetHeader>
-<Pagination query={query} lastpage={images.info.finalpage} />
+<Pagination query={querycopy} lastpage={images.info.finalpage} />

@@ -43,7 +43,7 @@
 <div class="icon-menu" bind:clientWidth={w} on:focusin={focusin} on:focusout={focusout}>
   {#each icons as icon, idx (icon.name)}
     {#if idx < iconlimit}
-      <IconButton relative name={icon.name} label={icon.label} outline={icon.outline} badgecount={icon.badgecount} on:click={onclick(icon.name)} />
+      <IconButton relative name={icon.name} label={icon.label} outline={icon.outline} badgecount={icon.badgecount} on:click={onclick(icon.name)} disabled={icon.disabled} />
     {/if}
   {/each}
   {#if icons.length > iconsthatwillfit}
@@ -52,7 +52,7 @@
       <div class="icon-menu-more">
         {#each icons as icon, idx (icon.name)}
           {#if idx >= iconlimit}
-            <IconButton relative name={icon.name} label={icon.label} outline={icon.outline} badgecount={icon.badgecount} on:click={onclick(icon.name)} />
+            <IconButton relative name={icon.name} label={icon.label} outline={icon.outline} badgecount={icon.badgecount} on:click={onclick(icon.name)} disabled={icon.disabled} />
           {/if}
         {/each}
       </div>

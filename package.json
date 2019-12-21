@@ -29,7 +29,7 @@
     "sharp": "^0.23.0",
     "slim-select": "^1.23.0",
     "@tensorflow/tfjs": "^1.2.7",
-    "txstate-node-utils": "^2.8.13",
+    "txstate-node-utils": "^2.8.17",
     "ua-parser-js": "^0.7.20"
   },
   "devDependencies": {

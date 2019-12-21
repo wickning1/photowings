@@ -33,5 +33,5 @@ app.use((error, req, res, next) => {
 
 apiservice.start().then(async () => {
   if (process.env.NODE_ENV === 'development') await fixtures()
-  scanner()
+  await scanner()
 }).catch(e => console.error('problem while scanning', e))
